@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Animal Blanket Planner</title>
+  <style>
+    body {
+      background-image: url(https://morganepeng.com/img/dot_grid2.png);
+      background-repeat: repeat;
+      background-color: #fdfdfd;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      text-align: center;
+    }
+    #controls {
+      font-family: inherit;
+      font-size: 1rem;
+      background: #fff;
+      border: 1px solid rgb(209, 209, 209);
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 1em;
+      max-width: 960px;
+      margin-bottom: 1em;
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+      align-items: left;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em;
+      justify-content: left;
+    }
+    .grid {
+      overflow-x: auto;
+      max-width: 100vw;
+      display: grid;
+      gap: 2px;
+      background: transparent;
+      margin: 1em;
+    }
+    .square {
+      width: 88px;
+      height: 88px;
+      background-color: white;
+      border-width: 6px;
+      border-style: solid;
+      border-color: #d1d1d1;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .icon {
+      max-width: 80%;
+      max-height: 80%;
+    }
+    select, button {
+      
+      font-family: inherit;
+      font-size: 1rem;
+      padding: 0.5em;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    select {
+      border: 1px solid #ccc;
+      background: white;
+      color: #333;
+      cursor: pointer;
+      padding-right: 2em;
+      background-position: right 0.75em center;
+      background-repeat: no-repeat;
+      background-size: 0.65em auto;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpolyline points='4,8 10,14 16,8' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75em center;
+      background-size: 0.65em auto;
+    }
+
+    select:hover {
+      background: #f9f9f9;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpolyline points='4,8 10,14 16,8' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75em center;
+      background-size: 0.65em auto;
+    }
+
+    button {
+      border: 1px solid #ccc;
+      background: #f5f5f5;
+      color: #333;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #f0f0f0;
+    }
+
+    button.export {
+      background-color: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+
+    button.export:hover {
+      background-color: #2563eb;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Animal Blanket Planner v1</h1>
+  </header>
+  <div id="controls">
+    <div class="row">
+      <label style="display: flex; flex-direction: column; gap: 0.3em; font-weight: 500;">
+        Layout
+        <select id="layoutSelect">
+          <option value="4x4">4 x 4</option>
+          <option value="4x6">4 x 6</option>
+          <option value="5x5">5 x 5</option>
+          <option value="5x6" selected>5 x 6</option>
+          <option value="6x6">6 x 6</option>
+          <option value="6x8">6 x 8</option>
+        </select>
+      </label>
+      <span style="border-left: 1px solid #ddd; height: 4em; margin: 0 0.5em;"></span>
+      <label style="display: flex; flex-direction: column; gap: 0.3em; font-weight: 500;">
+        Background
+        <div>
+          <select id="bgColorPreset">
+          <option value="#f0ead5">Cream</option>
+          <option value="#849587">Green</option>
+          <option value="#e1c8a7">Brown</option>
+          <option value="#ebad93">Pink</option>
+          <option value="#93c3eb">Blue</option>
+        </select>
+        <input type="color" id="bgColorPicker" value="#ffffff" />
+          </div>
+      </label>
+      <span style="border-left: 0px solid #fff; height: 4em; margin: 0 0.5em;"></span>
+      <label style="display: flex; flex-direction: column; gap: 0.3em; font-weight: 500;">
+        Border
+        <div>
+        <select id="borderColorPicker">
+          <option value="">None</option>
+          <option value="#a87754">Brown</option>
+          <option value="#495f4a">Green</option>
+          <option value="#cd896d">Pink</option>
+          <option value="#506584">Blue</option>
+        </select>
+        <input type="color" id="borderColorPickerCustom" value="#999999" />
+          </div>
+      </label>
+      <span style="border-left: 0px solid #fff; height: 4em; margin: 0 0.5em;"></span>
+      <label style="display: flex; flex-direction: column; gap: 0.3em; font-weight: 500;">
+        Animal
+        <select id="iconSelect"></select>
+      </label>
+    </div>
+      
+    <hr style="width: 100%; border: none; border-top: 1px solid #ddd; margin: 0em 0;">
+    <div class="row">
+      <button onclick="applyBulkEdit()">Apply to All</button>
+      <button onclick="clearGrid()">Clear</button>
+      <button onclick="randomizeGrid()">Randomize</button>      
+      <div style="display: flex; flex-direction: column; font-weight: 500; gap: 0.1em;">
+        <label style="cursor: pointer;"><input type="checkbox" id="applyColors" checked> Update colors</label>
+        <label style="cursor: pointer;"><input type="checkbox" id="applyAnimal" checked> Update animals</label>
+      </div>
+      <span style="border-left: 1px solid #ddd; height: 2.4em; margin: 0 0.5em;"></span>
+      <button onclick="window.open('https://morganeyarn.com/', '_blank')">Get patterns &#x2197;</button>
+      <button class="export" onclick="exportLayout()">Export PNG</button>
+      <input type="file" id="configInput" accept="application/json" style="display: none" />
+    </div>
+    </div>
+  <div id="grid" class="grid" style="overflow-x: auto; max-width: 100vw;"></div>  
+    <p style="margin: 1em; text-align: center">Your blanket will be approximatively <span id="blanketsize"></span>.<br />The final size may vary depending on your tension, join technique and border style.</p>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    const bgColors = ["#f0ead5", "#849587", "#e1c8a7", "#ebad93", "#93c3eb"];
+    const borderColors = ["", "#a87754", "#495f4a", "#cd896d", "#506584"];
+    const icons = ["", "Rabbit", "Dog", "Cat", "Cow", "Axolotl", "Duck", "Whale", "Panda", "Monkey", "Koala", "Owl", "Bee"];
+
+    const iconSelect = document.getElementById("iconSelect");
+    icons.forEach(name => {
+      const option = document.createElement("option");
+      option.value = name;
+      option.textContent = name === "" ? "None" : name;
+      iconSelect.appendChild(option);
+    });
+
+    let grid = document.getElementById("grid");
+    const bgColorPicker = document.getElementById("bgColorPicker");
+    const bgColorPreset = document.getElementById("bgColorPreset");
+    const borderColorPicker = document.getElementById("borderColorPicker");
+    const borderColorPickerCustom = document.getElementById("borderColorPickerCustom");
+
+    bgColorPicker.value = bgColorPreset.value;
+    borderColorPickerCustom.value = borderColorPicker.value || "#d1d1d1";
+
+    bgColorPreset.addEventListener("change", () => {
+      bgColorPicker.value = bgColorPreset.value;
+    });
+    bgColorPicker.addEventListener("input", () => {
+      let customOption = bgColorPreset.querySelector("option[value='custom']");
+      if (!customOption) {
+        customOption = document.createElement("option");
+        customOption.value = "custom";
+        customOption.textContent = "Custom";
+        bgColorPreset.appendChild(customOption);
+      }
+      bgColorPreset.value = "custom";
+    });
+    borderColorPicker.addEventListener("change", () => {
+      borderColorPickerCustom.value = borderColorPicker.value || "#d1d1d1";
+    });
+    borderColorPickerCustom.addEventListener("input", () => {
+      let customOption = borderColorPicker.querySelector("option[value='custom']");
+      if (!customOption) {
+        customOption = document.createElement("option");
+        customOption.value = "custom";
+        customOption.textContent = "Custom";
+        borderColorPicker.appendChild(customOption);
+      }
+      customOption.selected = true;
+    });
+
+    let currentLayout = [6, 5];
+    let squares = [];
+
+    function createGrid(rows, cols) {
+      updateBlanketSize(rows, cols);
+      grid.innerHTML = "";
+      grid.style.gridTemplateRows = `repeat(${rows}, 88px)`;
+      grid.style.gridTemplateColumns = `repeat(${cols}, 88px)`;
+      squares = [];
+
+      for (let i = 0; i < rows * cols; i++) {
+        const div = document.createElement("div");
+        div.className = "square";
+        div.dataset.index = i;
+        div.onclick = () => applyToSquare(div);
+        grid.appendChild(div);
+        squares.push(div);
+      }
+    }
+
+    function applyToSquare(div) {
+  const applyColors = document.getElementById("applyColors").checked;
+  const applyAnimal = document.getElementById("applyAnimal").checked;
+
+  if (applyColors) {
+    const bg = bgColorPicker.value;
+    const borderSelect = borderColorPicker.value;
+    const border = borderSelect === "custom" ? borderColorPickerCustom.value : borderSelect;
+    div.style.backgroundColor = bg;
+    div.style.borderColor = border || "transparent";
+  }
+  if (applyAnimal) {
+    const icon = iconSelect.value;
+    insertSVGIcon(div, icon);
+  }
+}
+
+    function getIconSVG(name) {
+  const svgMap = {
+    Rabbit: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#f8d7da" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M30 70 Q50 85 70 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
+    Dog: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#ffe0b3" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M40 70 Q50 80 60 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
+    Cat: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fce4ec" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M40 70 Q50 85 60 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
+    Cow: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fff8dc" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><rect x="30" y="65" width="40" height="10" fill="#000" /></svg>`,
+    Axolotl: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#ffe0f0" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M30 70 Q50 80 70 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
+    Duck: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fff176" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M50 70 Q50 80 60 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
+    Whale: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#bbdefb" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M40 70 Q50 75 60 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
+    Panda: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fff" /><circle cx="30" cy="40" r="8" fill="#000" /><circle cx="70" cy="40" r="8" fill="#000" /><circle cx="35" cy="45" r="5" fill="#000" /><circle cx="65" cy="45" r="5" fill="#000" /><path d="M40 70 Q50 80 60 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
+    Monkey: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#d7ccc8" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M35 70 Q50 85 65 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
+    Koala: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#cfd8dc" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><circle cx="50" cy="50" r="6" fill="#333" /></svg>`,
+    Owl: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#ffe082" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><polygon points="45,70 55,70 50,80" fill="#000" /></svg>`,
+    Bee: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fff59d" /><line x1="30" y1="30" x2="70" y2="30" stroke="#000" stroke-width="4" /><line x1="30" y1="50" x2="70" y2="50" stroke="#000" stroke-width="4" /><line x1="30" y1="70" x2="70" y2="70" stroke="#000" stroke-width="4" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /></svg>`
+  };
+  return svgMap[name] || "";
+}
+
+function insertSVGIcon(div, iconName) {
+  div.innerHTML = "";
+  if (!iconName) return;
+  const parser = new DOMParser();
+  const svgDoc = parser.parseFromString(getIconSVG(iconName), "image/svg+xml");
+  const svgElement = svgDoc.documentElement;
+  div.appendChild(svgElement);
+}
+
+function applyBulkEdit() {
+      squares.forEach(div => applyToSquare(div));
+    }
+
+    function clearGrid() {
+      squares.forEach(div => {
+        div.style.backgroundColor = "white";
+        div.style.borderColor = "#d1d1d1";
+        div.innerHTML = "";
+      });
+    }
+
+function randomizeGrid() {
+  squares.forEach(div => {
+    const bg = bgColors[Math.floor(Math.random() * bgColors.length)];
+    const border = borderColors[Math.floor(Math.random() * borderColors.length)];
+    const icon = icons[Math.floor(Math.random() * icons.length)];
+
+    div.style.backgroundColor = bg;
+    div.style.borderColor = border === "" ? "transparent" : border;
+    insertSVGIcon(div, icon);
+  });
+}
+
+    document.getElementById("layoutSelect").addEventListener("change", e => {
+      const [cols, rows] = e.target.value.split("x").map(Number);
+      currentLayout = [rows, cols];
+      createGrid(rows, cols);
+    });
+
+    document.getElementById("configInput").addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const config = JSON.parse(reader.result);
+        config.forEach((item, i) => {
+          const div = squares[i];
+          div.style.backgroundColor = item.bg;
+          div.style.borderColor = item.border || "transparent";
+          div.innerHTML = "";
+          insertSVGIcon(div, item.icon);
+        });
+      };
+      reader.readAsText(file);
+    });
+
+    function exportLayout() {
+      html2canvas(grid, { useCORS: true, scale: 2, backgroundColor: "#ffffff" }).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "crochet_layout.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+
+    createGrid(...currentLayout);
+
+    function updateBlanketSize(rows, cols) {
+      const squareInch = 5;
+      const squareCm = 13;
+      const gapCm = 0.5;
+
+      const totalWidthCm = cols * squareCm + (cols - 1) * gapCm;
+      const totalHeightCm = rows * squareCm + (rows - 1) * gapCm;
+
+      const totalWidthIn = cols * squareInch;
+      const totalHeightIn = rows * squareInch;
+
+      const inches = `${totalWidthIn} x ${totalHeightIn} in`;
+      const cm = `${Math.round(totalWidthCm)} x ${Math.round(totalHeightCm)} cm`;
+
+      document.getElementById("blanketsize").textContent = `${inches} or ${cm}`;
+    }
+  </script>
+</body>
+</html>
