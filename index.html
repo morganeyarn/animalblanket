@@ -279,7 +279,7 @@
 
     async function getIconSVG(name) {
   try {
-    const response = await fetch(`pattern/${name}.svg`);
+    const response = await fetch(`patterns/${name}.svg`);
     if (!response.ok) throw new Error("SVG not found");
     return await response.text();
   } catch (e) {
