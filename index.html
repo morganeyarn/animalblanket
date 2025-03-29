@@ -260,7 +260,7 @@
       }
     }
 
-    async function applyToSquare(div) {
+    function applyToSquare(div) {
   const applyColors = document.getElementById("applyColors").checked;
   const applyAnimal = document.getElementById("applyAnimal").checked;
 
@@ -273,34 +273,39 @@
   }
   if (applyAnimal) {
     const icon = iconSelect.value;
-    await insertSVGIcon(div, icon);
+    insertSVGIcon(div, icon);
   }
 }
 
-    async function getIconSVG(name) {
-  try {
-    const response = await fetch(`patterns/${name}.svg`);
-    if (!response.ok) throw new Error("SVG not found");
-    return await response.text();
-  } catch (e) {
-    console.error(`Could not load SVG for ${name}`, e);
-    return "";
-  }
+    function getIconSVG(name) {
+  const svgMap = {
+    Rabbit: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#f8d7da" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M30 70 Q50 85 70 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
+    Dog: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#ffe0b3" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M40 70 Q50 80 60 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
+    Cat: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fce4ec" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M40 70 Q50 85 60 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
+    Cow: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fff8dc" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><rect x="30" y="65" width="40" height="10" fill="#000" /></svg>`,
+    Axolotl: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#ffe0f0" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M30 70 Q50 80 70 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
+    Duck: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fff176" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M50 70 Q50 80 60 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
+    Whale: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#bbdefb" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M40 70 Q50 75 60 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
+    Panda: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fff" /><circle cx="30" cy="40" r="8" fill="#000" /><circle cx="70" cy="40" r="8" fill="#000" /><circle cx="35" cy="45" r="5" fill="#000" /><circle cx="65" cy="45" r="5" fill="#000" /><path d="M40 70 Q50 80 60 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
+    Monkey: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#d7ccc8" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M35 70 Q50 85 65 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
+    Koala: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#cfd8dc" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><circle cx="50" cy="50" r="6" fill="#333" /></svg>`,
+    Owl: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#ffe082" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><polygon points="45,70 55,70 50,80" fill="#000" /></svg>`,
+    Bee: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fff59d" /><line x1="30" y1="30" x2="70" y2="30" stroke="#000" stroke-width="4" /><line x1="30" y1="50" x2="70" y2="50" stroke="#000" stroke-width="4" /><line x1="30" y1="70" x2="70" y2="70" stroke="#000" stroke-width="4" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /></svg>`
+  };
+  return svgMap[name] || "";
 }
 
-async function insertSVGIcon(div, iconName) {
+function insertSVGIcon(div, iconName) {
   div.innerHTML = "";
   if (!iconName) return;
-  const svgString = await getIconSVG(iconName);
   const parser = new DOMParser();
-  const svgDoc = parser.parseFromString(svgString, "image/svg+xml");
+  const svgDoc = parser.parseFromString(getIconSVG(iconName), "image/svg+xml");
   const svgElement = svgDoc.documentElement;
-  svgElement.classList.add("icon");
   div.appendChild(svgElement);
 }
 
 function applyBulkEdit() {
-      squares.forEach(async div => await applyToSquare(div));
+      squares.forEach(div => applyToSquare(div));
     }
 
     function clearGrid() {
@@ -312,14 +317,14 @@ function applyBulkEdit() {
     }
 
 function randomizeGrid() {
-  squares.forEach(async div => {
+  squares.forEach(div => {
     const bg = bgColors[Math.floor(Math.random() * bgColors.length)];
     const border = borderColors[Math.floor(Math.random() * borderColors.length)];
     const icon = icons[Math.floor(Math.random() * icons.length)];
 
     div.style.backgroundColor = bg;
     div.style.borderColor = border === "" ? "transparent" : border;
-    await insertSVGIcon(div, icon);
+    insertSVGIcon(div, icon);
   });
 }
 
@@ -335,12 +340,12 @@ function randomizeGrid() {
       const reader = new FileReader();
       reader.onload = () => {
         const config = JSON.parse(reader.result);
-        config.forEach(async (item, i) => {
+        config.forEach((item, i) => {
           const div = squares[i];
           div.style.backgroundColor = item.bg;
           div.style.borderColor = item.border || "transparent";
           div.innerHTML = "";
-          await insertSVGIcon(div, item.icon);
+          insertSVGIcon(div, item.icon);
         });
       };
       reader.readAsText(file);
