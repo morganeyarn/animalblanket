@@ -21,11 +21,20 @@
   }
 
   header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 332px;
+    z-index: 100;
     height: 60px;
     padding: 0 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    pointer-events: none;
+  }
+  header * {
+    pointer-events: auto;
   }
 
   h1 {
@@ -63,6 +72,7 @@
   }
 
   #grid {
+  padding-top: 60px;
     flex: 1;
     display: grid;
     padding: 1rem;
@@ -292,7 +302,7 @@
 <body>
 <div id="main-container">
   <header>
-    <div style="display: flex; align-items: center; gap: 1rem;">
+    <div class="button-group">
       <h1>Animal Blanket Designer</h1>
       <select id="layout">
         <option value="4x4">4 x 4 squares</option>
@@ -317,11 +327,11 @@
 <aside id="controls">
   <div class="control-group">
   <h2>Edit mode</h2>
-    <div class="mode-toggle">
-      <button type="button" class="mode-btn selected" data-mode="all">All</button>
-      <button type="button" class="mode-btn" data-mode="color">Color</button>
-      <button type="button" class="mode-btn" data-mode="pattern">Animal</button>
-    </div>
+  <div class="mode-toggle">
+    <button type="button" class="mode-btn selected" data-mode="all">All</button>
+    <button type="button" class="mode-btn" data-mode="color">Color</button>
+    <button type="button" class="mode-btn" data-mode="pattern">Animal</button>
+  </div>
   </div>
   <div class="control-group">
     <h2>Square colors</h2>
@@ -329,13 +339,14 @@
       <h3>Background</h3>
       <div class="control-sub-group-item">
         <div class="color-palette" id="bgPalette"></div>
-        or <input type="color" id="bgColor" value="#c7aae4"/></div>
+        or <input type="color" id="bgColor" value="#c7aae4"/>
+      </div>
     </div>
     <div class="control-sub-group">
       <h3>Border</h3>
       <div class="control-sub-group-item">
         <div class="color-palette" id="borderPalette"></div>
-        or <input type="color" id="borderColor" value="#856d9c"/></div>
+        or <input type="color" id="borderColor" value="#856d9c"/>
       </div>
     </div>
   </div>
