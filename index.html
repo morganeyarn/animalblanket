@@ -2,382 +2,685 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Animal Blanket Planner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crochet Blanket Planner</title>
   <style>
+  html, body {
+    background-image: url(https://morganepeng.com/img/dot_grid2.png);
+    background-repeat: repeat;
+    background-color: #fdfdfd;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+  }
+
+  body {
+    display: flex;
+    height: 100vh;
+  }
+
+  header {
+    height: 60px;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+
+  h2 {
+    font-weight: bold;
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+  }
+  
+  h3 {
+    font-weight: normal;
+    font-size: 1rem;
+    margin: 0 0 0.5rem;
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  #main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #grid {
+    flex: 1;
+    display: grid;
+    padding: 1rem;
+    gap: 2px;
+    justify-content: center;
+    align-content: center;
+    overflow-y: auto;
+  }
+
+  #gridInner {
+    display: grid;
+    gap: 2px;
+    background: white;
+    padding: 0;
+  }
+
+  #controls {
+    width: 300px;
+    padding: 1rem;
+    border-left: 1px solid #ddd;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .square {
+    width: 100px;
+    height: 100px;
+    background-color: #eeeeee;
+    border: 8px solid transparent;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .square img {
+    max-width: 90%;
+    max-height: 90%;
+    pointer-events: none;
+  }
+
+  .control-group {
+    margin-bottom: 1.5rem;
+  }
+  .control-sub-group {
+    background-color: #eeeeee;
+    padding: 10px;
+    border-radius: 0.5rem;
+  }
+  .control-sub-group:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
+  .control-sub-group-item {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;"
+  }
+
+  .color-palette {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .color-button {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  .color-button.selected {
+    border-color: #000;
+  }
+
+  .icon-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .icon-button {
+    height: 60px;
+    border: 2px solid transparent;
+    background: #eeeeee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+
+  .icon-button.selected {
+    border-color: black;
+  }
+
+  .icon-button img {
+    width: 54px;
+    height: 54px;
+  }
+
+  input[type="color"] {
+    width: 32px;
+    height: 32px;
+    /* border: 2px solid #ccc; */
+    box-sizing: border-box;
+  }
+
+  input[type="color"].selected,
+  input[type="color"]:focus {
+    /* border: 2px solid #333333; */
+    outline: none;
+  }
+
+  select, button {
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 0.5em;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  select {
+    border: 1px solid #ccc;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    padding-right: 2em;
+    background-position: right 0.75em center;
+    background-repeat: no-repeat;
+    background-size: 0.65em auto;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpolyline points='4,8 10,14 16,8' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75em center;
+    background-size: 0.65em auto;
+  }
+
+  select:hover {
+    background: #f9f9f9;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpolyline points='4,8 10,14 16,8' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75em center;
+    background-size: 0.65em auto;
+  }
+
+  button {
+    border: 1px solid #ccc;
+    background: #ffffff;
+    color: #333;
+    cursor: pointer;
+  }
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  button:hover {
+    background: #f9f9f9;
+  }
+  button.export {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+  }
+  button.export:hover {
+    background-color: #2563eb;
+  }
+  .button-group {
+    display: flex; align-items: center; gap: 0.5rem; align-self: center;
+  }
+  .button-group-space-between {
+    display: flex; justify-content: space-between; gap: 0.5rem;
+  }
+    
+  .mode-toggle {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    border-radius: 0.5rem;
+    background-color: #eeeeee;
+    padding: 4px;
+    box-sizing: border-box;
+  }
+  .mode-btn {
+    flex: 1;
+    padding: 0.5em 1em;
+    font-size: 1rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    background: none;
+    color: #374151;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
+  }
+  .mode-btn:hover {
+    background-color: #f0f0f0;
+  }
+  .mode-btn.selected {
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 768px) {
     body {
-      background-image: url(https://morganepeng.com/img/dot_grid2.png);
-      background-repeat: repeat;
-      background-color: #fdfdfd;
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      display: flex;
       flex-direction: column;
-      align-items: center;
     }
-    header {
-      text-align: center;
-    }
+
     #controls {
-      font-family: inherit;
-      font-size: 1rem;
-      background: #fff;
-      border: 1px solid rgb(209, 209, 209);
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      padding: 1em;
-      max-width: 960px;
-      margin-bottom: 1em;
-      display: flex;
-      flex-direction: column;
-      gap: 1em;
-      align-items: left;
+      width: 100%;
+      height: auto;
+      border-left: none;
+      border-top: 1px solid #ddd;
     }
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1em;
-      justify-content: left;
-    }
-    .grid {
-      overflow-x: auto;
-      max-width: 100vw;
-      display: grid;
-      gap: 2px;
-      background: transparent;
-      margin: 1em;
-    }
-    .square {
-      width: 88px;
-      height: 88px;
-      background-color: white;
-      border-width: 6px;
-      border-style: solid;
-      border-color: #d1d1d1;
-      box-sizing: border-box;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-    .icon {
-      max-width: 80%;
-      max-height: 80%;
-    }
-    select, button {
-      
-      font-family: inherit;
-      font-size: 1rem;
-      padding: 0.5em;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    select {
-      border: 1px solid #ccc;
-      background: white;
-      color: #333;
-      cursor: pointer;
-      padding-right: 2em;
-      background-position: right 0.75em center;
-      background-repeat: no-repeat;
-      background-size: 0.65em auto;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpolyline points='4,8 10,14 16,8' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 0.75em center;
-      background-size: 0.65em auto;
-    }
-
-    select:hover {
-      background: #f9f9f9;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpolyline points='4,8 10,14 16,8' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 0.75em center;
-      background-size: 0.65em auto;
-    }
-
-    button {
-      border: 1px solid #ccc;
-      background: #f5f5f5;
-      color: #333;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #f0f0f0;
-    }
-
-    button.export {
-      background-color: #3b82f6;
-      color: white;
-      border-color: #3b82f6;
-    }
-
-    button.export:hover {
-      background-color: #2563eb;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
+<div id="main-container">
   <header>
-    <h1>Animal Blanket Planner v1</h1>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <h1>Animal Blanket Designer</h1>
+      <select id="layout">
+        <option value="4x4">4 x 4</option>
+        <option value="4x6">4 x 6</option>
+        <option value="5x5">5 x 5</option>
+        <option value="5x6" selected="selected">5 x 6</option>
+        <option value="6x6">6 x 6</option>
+        <option value="6x8">6 x 8</option>
+      </select>
+    </div>
+    <div class="button-group">
+    <button id="undoBtn" disabled>Undo</button>
+    <button id="redoBtn" disabled>Redo</button>
+    <button id="clearBtn">Clear</button>
+    <a href="https://morganeyarn.com/" target="_blank" rel="noopener noreferrer"><button>Get patterns ↗</button></a>
+    <button id="exportBtn" class="export">Export as PNG</button>
+    </div>
   </header>
-  <div id="controls">
-    <div class="row">
-      <label style="display: flex; flex-direction: column; gap: 0.3em; font-weight: 500;">
-        Layout
-        <select id="layoutSelect">
-          <option value="4x4">4 x 4</option>
-          <option value="4x6">4 x 6</option>
-          <option value="5x5">5 x 5</option>
-          <option value="5x6" selected>5 x 6</option>
-          <option value="6x6">6 x 6</option>
-          <option value="6x8">6 x 8</option>
-        </select>
-      </label>
-      <span style="border-left: 1px solid #ddd; height: 4em; margin: 0 0.5em;"></span>
-      <label style="display: flex; flex-direction: column; gap: 0.3em; font-weight: 500;">
-        Background
-        <div>
-          <select id="bgColorPreset">
-          <option value="#f0ead5">Cream</option>
-          <option value="#849587">Green</option>
-          <option value="#e1c8a7">Brown</option>
-          <option value="#ebad93">Pink</option>
-          <option value="#93c3eb">Blue</option>
-        </select>
-        <input type="color" id="bgColorPicker" value="#ffffff" />
-          </div>
-      </label>
-      <span style="border-left: 0px solid #fff; height: 4em; margin: 0 0.5em;"></span>
-      <label style="display: flex; flex-direction: column; gap: 0.3em; font-weight: 500;">
-        Border
-        <div>
-        <select id="borderColorPicker">
-          <option value="">None</option>
-          <option value="#a87754">Brown</option>
-          <option value="#495f4a">Green</option>
-          <option value="#cd896d">Pink</option>
-          <option value="#506584">Blue</option>
-        </select>
-        <input type="color" id="borderColorPickerCustom" value="#999999" />
-          </div>
-      </label>
-      <span style="border-left: 0px solid #fff; height: 4em; margin: 0 0.5em;"></span>
-      <label style="display: flex; flex-direction: column; gap: 0.3em; font-weight: 500;">
-        Animal
-        <select id="iconSelect"></select>
-      </label>
+  <main>
+    <div id="grid"><div id="gridInner"></div></div>
+  </main>
+</div>
+<aside id="controls">
+  <div class="control-group">
+  <h2>Edit mode</h2>
+    <div class="mode-toggle">
+      <button type="button" class="mode-btn selected" data-mode="all">All</button>
+      <button type="button" class="mode-btn" data-mode="color">Color</button>
+      <button type="button" class="mode-btn" data-mode="pattern">Pattern</button>
     </div>
-      
-    <hr style="width: 100%; border: none; border-top: 1px solid #ddd; margin: 0em 0;">
-    <div class="row">
-      <button onclick="applyBulkEdit()">Apply to All</button>
-      <button onclick="clearGrid()">Clear</button>
-      <button onclick="randomizeGrid()">Randomize</button>      
-      <div style="display: flex; flex-direction: column; font-weight: 500; gap: 0.1em;">
-        <label style="cursor: pointer;"><input type="checkbox" id="applyColors" checked> Update colors</label>
-        <label style="cursor: pointer;"><input type="checkbox" id="applyAnimal" checked> Update animals</label>
+  </div>
+  <div class="control-group">
+    <h2>Square colors</h2>
+    <div class="control-sub-group">
+      <h3>Background</h3>
+      <div class="control-sub-group-item">
+        <div class="color-palette" id="bgPalette"></div>
+        or <input type="color" id="bgColor" value="#c7aae4"/></div>
+    </div>
+    <div class="control-sub-group">
+      <h3>Border</h3>
+      <div class="control-sub-group-item">
+        <div class="color-palette" id="borderPalette"></div>
+        or <input type="color" id="borderColor" value="#856d9c"/></div>
       </div>
-      <span style="border-left: 1px solid #ddd; height: 2.4em; margin: 0 0.5em;"></span>
-      <button onclick="window.open('https://morganeyarn.com/', '_blank')">Get patterns &#x2197;</button>
-      <button class="export" onclick="exportLayout()">Export PNG</button>
-      <input type="file" id="configInput" accept="application/json" style="display: none" />
     </div>
-    </div>
-  <div id="grid" class="grid" style="overflow-x: auto; max-width: 100vw;"></div>  
-    <p style="margin: 1em; text-align: center">Your blanket will be approximatively <span id="blanketsize"></span>.<br />The final size may vary depending on your tension, join technique and border style.</p>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script>
-    const bgColors = ["#f0ead5", "#849587", "#e1c8a7", "#ebad93", "#93c3eb"];
-    const borderColors = ["", "#a87754", "#495f4a", "#cd896d", "#506584"];
-    const icons = ["", "Rabbit", "Dog", "Cat", "Cow", "Axolotl", "Duck", "Whale", "Panda", "Monkey", "Koala", "Owl", "Bee"];
+  </div>
+  <div class="control-group">
+  <h2>Square patterns</h2>
+    <div class="icon-grid" id="iconGrid"></div>
+  </div>
+  <div class="button-group-space-between">
+    <button id="applyAllBtn" style="flex: 1;">Apply to all</button>
+    <button id="randomizeBtn" style="flex: 1;">Randomize</button>
+  </div>
+</aside>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+(() => {
+  const grid = document.getElementById('grid');
+  const layoutSelect = document.getElementById('layout');
+  const bgPalette = document.getElementById('bgPalette');
+  const borderPalette = document.getElementById('borderPalette');
+  const bgColorInput = document.getElementById('bgColor');
+  const borderColorInput = document.getElementById('borderColor');
+  const iconGrid = document.getElementById('iconGrid');
+  const undoBtn = document.getElementById('undoBtn');
+  const redoBtn = document.getElementById('redoBtn');
+  const undoStack = [];
+  const redoStack = [];
 
-    const iconSelect = document.getElementById("iconSelect");
-    icons.forEach(name => {
-      const option = document.createElement("option");
-      option.value = name;
-      option.textContent = name === "" ? "None" : name;
-      iconSelect.appendChild(option);
+  const presetBGColors = ['#f0ead5', '#849587', '#e1c8a7', '#ebad93', '#93c3eb'];
+  const presetBorderColors = ['#a87754', '#495f4a', '#cd896d', '#506584'];
+  const iconPaths = Array.from({ length: 19 }, (_, i) => `icons/icon${i + 1}.svg`);
+
+  let editMode = 'all';
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      editMode = btn.dataset.mode;
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
     });
-
-    let grid = document.getElementById("grid");
-    const bgColorPicker = document.getElementById("bgColorPicker");
-    const bgColorPreset = document.getElementById("bgColorPreset");
-    const borderColorPicker = document.getElementById("borderColorPicker");
-    const borderColorPickerCustom = document.getElementById("borderColorPickerCustom");
-
-    bgColorPicker.value = bgColorPreset.value;
-    borderColorPickerCustom.value = borderColorPicker.value || "#d1d1d1";
-
-    bgColorPreset.addEventListener("change", () => {
-      bgColorPicker.value = bgColorPreset.value;
-    });
-    bgColorPicker.addEventListener("input", () => {
-      let customOption = bgColorPreset.querySelector("option[value='custom']");
-      if (!customOption) {
-        customOption = document.createElement("option");
-        customOption.value = "custom";
-        customOption.textContent = "Custom";
-        bgColorPreset.appendChild(customOption);
-      }
-      bgColorPreset.value = "custom";
-    });
-    borderColorPicker.addEventListener("change", () => {
-      borderColorPickerCustom.value = borderColorPicker.value || "#d1d1d1";
-    });
-    borderColorPickerCustom.addEventListener("input", () => {
-      let customOption = borderColorPicker.querySelector("option[value='custom']");
-      if (!customOption) {
-        customOption = document.createElement("option");
-        customOption.value = "custom";
-        customOption.textContent = "Custom";
-        borderColorPicker.appendChild(customOption);
-      }
-      customOption.selected = true;
-    });
-
-    let currentLayout = [6, 5];
-    let squares = [];
-
-    function createGrid(rows, cols) {
-      updateBlanketSize(rows, cols);
-      grid.innerHTML = "";
-      grid.style.gridTemplateRows = `repeat(${rows}, 88px)`;
-      grid.style.gridTemplateColumns = `repeat(${cols}, 88px)`;
-      squares = [];
-
-      for (let i = 0; i < rows * cols; i++) {
-        const div = document.createElement("div");
-        div.className = "square";
-        div.dataset.index = i;
-        div.onclick = () => applyToSquare(div);
-        grid.appendChild(div);
-        squares.push(div);
-      }
-    }
-
-    function applyToSquare(div) {
-  const applyColors = document.getElementById("applyColors").checked;
-  const applyAnimal = document.getElementById("applyAnimal").checked;
-
-  if (applyColors) {
-    const bg = bgColorPicker.value;
-    const borderSelect = borderColorPicker.value;
-    const border = borderSelect === "custom" ? borderColorPickerCustom.value : borderSelect;
-    div.style.backgroundColor = bg;
-    div.style.borderColor = border || "transparent";
-  }
-  if (applyAnimal) {
-    const icon = iconSelect.value;
-    insertSVGIcon(div, icon);
-  }
-}
-
-    function getIconSVG(name) {
-  const svgMap = {
-    Rabbit: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#f8d7da" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M30 70 Q50 85 70 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
-    Dog: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#ffe0b3" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M40 70 Q50 80 60 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
-    Cat: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fce4ec" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M40 70 Q50 85 60 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
-    Cow: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fff8dc" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><rect x="30" y="65" width="40" height="10" fill="#000" /></svg>`,
-    Axolotl: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#ffe0f0" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M30 70 Q50 80 70 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
-    Duck: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fff176" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M50 70 Q50 80 60 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
-    Whale: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#bbdefb" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M40 70 Q50 75 60 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
-    Panda: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fff" /><circle cx="30" cy="40" r="8" fill="#000" /><circle cx="70" cy="40" r="8" fill="#000" /><circle cx="35" cy="45" r="5" fill="#000" /><circle cx="65" cy="45" r="5" fill="#000" /><path d="M40 70 Q50 80 60 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
-    Monkey: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#d7ccc8" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><path d="M35 70 Q50 85 65 70" stroke="#000" stroke-width="4" fill="none" /></svg>`,
-    Koala: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#cfd8dc" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><circle cx="50" cy="50" r="6" fill="#333" /></svg>`,
-    Owl: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#ffe082" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /><polygon points="45,70 55,70 50,80" fill="#000" /></svg>`,
-    Bee: `<svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fff59d" /><line x1="30" y1="30" x2="70" y2="30" stroke="#000" stroke-width="4" /><line x1="30" y1="50" x2="70" y2="50" stroke="#000" stroke-width="4" /><line x1="30" y1="70" x2="70" y2="70" stroke="#000" stroke-width="4" /><circle cx="35" cy="40" r="5" fill="#000" /><circle cx="65" cy="40" r="5" fill="#000" /></svg>`
-  };
-  return svgMap[name] || "";
-}
-
-function insertSVGIcon(div, iconName) {
-  div.innerHTML = "";
-  if (!iconName) return;
-  const parser = new DOMParser();
-  const svgDoc = parser.parseFromString(getIconSVG(iconName), "image/svg+xml");
-  const svgElement = svgDoc.documentElement;
-  div.appendChild(svgElement);
-}
-
-function applyBulkEdit() {
-      squares.forEach(div => applyToSquare(div));
-    }
-
-    function clearGrid() {
-      squares.forEach(div => {
-        div.style.backgroundColor = "white";
-        div.style.borderColor = "#d1d1d1";
-        div.innerHTML = "";
-      });
-    }
-
-function randomizeGrid() {
-  squares.forEach(div => {
-    const bg = bgColors[Math.floor(Math.random() * bgColors.length)];
-    const border = borderColors[Math.floor(Math.random() * borderColors.length)];
-    const icon = icons[Math.floor(Math.random() * icons.length)];
-
-    div.style.backgroundColor = bg;
-    div.style.borderColor = border === "" ? "transparent" : border;
-    insertSVGIcon(div, icon);
   });
-}
 
-    document.getElementById("layoutSelect").addEventListener("change", e => {
-      const [cols, rows] = e.target.value.split("x").map(Number);
-      currentLayout = [rows, cols];
-      createGrid(rows, cols);
-    });
+const currentSelection = {
+    bg: '#ffffff',
+    border: 'transparent',
+    icon: ''
+  };
 
-    document.getElementById("configInput").addEventListener("change", e => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        const config = JSON.parse(reader.result);
-        config.forEach((item, i) => {
-          const div = squares[i];
-          div.style.backgroundColor = item.bg;
-          div.style.borderColor = item.border || "transparent";
-          div.innerHTML = "";
-          insertSVGIcon(div, item.icon);
-        });
-      };
-      reader.readAsText(file);
-    });
+  function createPalette(container, colors, key) {
+    container.innerHTML = '';
 
-    function exportLayout() {
-      html2canvas(grid, { useCORS: true, scale: 2, backgroundColor: "#ffffff" }).then(canvas => {
-        const link = document.createElement("a");
-        link.download = "crochet_layout.png";
-        link.href = canvas.toDataURL();
-        link.click();
+    if (key === 'border') {
+      const transparentBtn = document.createElement('div');
+      transparentBtn.className = 'color-button selected';
+      transparentBtn.style.backgroundColor = 'transparent';
+      transparentBtn.innerHTML = '<svg viewBox="0 0 32 32" width="32" height="32" style="position:absolute;top:0;left:0;"><line x1="4" y1="24" x2="24" y2="4" stroke="red" stroke-width="2" /></svg>';
+      currentSelection[key] = 'transparent';
+      transparentBtn.addEventListener('click', () => {
+        container.querySelectorAll('.color-button').forEach(b => b.classList.remove('selected'));
+        transparentBtn.classList.add('selected');
+        currentSelection[key] = 'transparent';
+        borderColorInput.classList.remove('selected');
       });
+      container.appendChild(transparentBtn);
     }
 
-    createGrid(...currentLayout);
+    colors.forEach((color, index) => {
+      const btn = document.createElement('div');
+      btn.className = 'color-button' + (key !== 'border' && index === 0 ? ' selected' : '');
+      btn.style.backgroundColor = color;
+      if (key !== 'border' && index === 0) currentSelection[key] = color;
+      btn.addEventListener('click', () => {
+        container.querySelectorAll('.color-button').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        currentSelection[key] = color;
+        if (key === 'bg') bgColorInput.classList.remove('selected');
+        if (key === 'border') borderColorInput.classList.remove('selected');
+      });
+      container.appendChild(btn);
+    });
+  }
 
-    function updateBlanketSize(rows, cols) {
-      const squareInch = 5;
-      const squareCm = 13;
-      const gapCm = 0.5;
+  function createIconGrid() {
+    iconGrid.innerHTML = '';
+    const noneBtn = document.createElement('div');
+    noneBtn.className = 'icon-button selected';
+    noneBtn.textContent = 'None';
+    noneBtn.addEventListener('click', () => {
+      currentSelection.icon = '';
+      updateIconSelection(noneBtn);
+    });
+    iconGrid.appendChild(noneBtn);
 
-      const totalWidthCm = cols * squareCm + (cols - 1) * gapCm;
-      const totalHeightCm = rows * squareCm + (rows - 1) * gapCm;
+    iconPaths.forEach(path => {
+      const btn = document.createElement('div');
+      btn.className = 'icon-button';
+      const img = document.createElement('img');
+      img.src = path;
+      btn.appendChild(img);
+      btn.addEventListener('click', () => {
+        currentSelection.icon = path;
+        updateIconSelection(btn);
+      });
+      iconGrid.appendChild(btn);
+    });
+  }
 
-      const totalWidthIn = cols * squareInch;
-      const totalHeightIn = rows * squareInch;
+  function updateIconSelection(selectedBtn) {
+    iconGrid.querySelectorAll('.icon-button').forEach(b => b.classList.remove('selected'));
+    selectedBtn.classList.add('selected');
+  }
 
-      const inches = `${totalWidthIn} x ${totalHeightIn} in`;
-      const cm = `${Math.round(totalWidthCm)} x ${Math.round(totalHeightCm)} cm`;
-
-      document.getElementById("blanketsize").textContent = `${inches} or ${cm}`;
+  function createGrid(size) {
+    const [cols, rows] = size.split('x').map(Number);
+    const gridInner = document.getElementById('gridInner');
+    gridInner.style.display = 'grid';
+    gridInner.style.gridTemplateColumns = `repeat(${cols}, 100px)`;
+    gridInner.innerHTML = '';
+    for (let i = 0; i < cols * rows; i++) {
+      const square = document.createElement('div');
+      square.className = 'square';
+      square.addEventListener('click', () => customizeSquare(square));
+      gridInner.appendChild(square);
     }
-  </script>
+  }
+
+  function customizeSquare(square, record = true) {
+    if (record) {
+      undoStack.push({
+        square,
+        bg: square.style.backgroundColor,
+        border: square.style.borderColor,
+        icon: square.querySelector('img')?.src || ''
+      });
+      redoStack.length = 0;
+      updateUndoRedoButtons();
+    }
+    if (editMode === 'all' || editMode === 'color') {
+      square.style.backgroundColor = currentSelection.bg;
+      square.style.borderColor = currentSelection.border;
+    }
+    if (editMode === 'all' || editMode === 'pattern') {
+      square.innerHTML = '';
+      if (currentSelection.icon) {
+        const img = document.createElement('img');
+        img.src = currentSelection.icon;
+        img.alt = '';
+        square.appendChild(img);
+      }
+    }
+  }
+
+  function updateUndoRedoButtons() {
+    undoBtn.disabled = undoStack.length === 0;
+    redoBtn.disabled = redoStack.length === 0;
+  }
+
+  function init() {
+    createPalette(bgPalette, presetBGColors, 'bg');
+    createPalette(borderPalette, presetBorderColors, 'border');
+    createIconGrid();
+    createGrid(layoutSelect.value);
+    updateUndoRedoButtons(); 
+  }
+
+  layoutSelect.addEventListener('change', () => {
+    undoStack.length = 0;
+    redoStack.length = 0;
+    updateUndoRedoButtons();
+    createGrid(layoutSelect.value);
+  });
+
+  bgColorInput.addEventListener('input', () => {
+    currentSelection.bg = bgColorInput.value;
+    let matched = false;
+    bgPalette.querySelectorAll('.color-button').forEach(b => {
+      if (b.style.backgroundColor === bgColorInput.value) {
+        b.classList.add('selected');
+        matched = true;
+      } else {
+        b.classList.remove('selected');
+      }
+    });
+    bgColorInput.classList.toggle('selected', !matched);
+  });
+
+  borderColorInput.addEventListener('input', () => {
+    currentSelection.border = borderColorInput.value;
+    let matched = false;
+    borderPalette.querySelectorAll('.color-button').forEach(b => {
+      if (b.style.backgroundColor === borderColorInput.value) {
+        b.classList.add('selected');
+        matched = true;
+      } else {
+        b.classList.remove('selected');
+      }
+    });
+    borderColorInput.classList.toggle('selected', !matched);
+  });
+
+  document.getElementById('applyAllBtn').addEventListener('click', () => {
+    const snapshot = Array.from(document.querySelectorAll('.square')).map(square => ({
+      square,
+      bg: square.style.backgroundColor,
+      border: square.style.borderColor,
+      icon: square.querySelector('img')?.src || ''
+    }));
+    undoStack.push(snapshot);
+    redoStack.length = 0;
+    document.querySelectorAll('.square').forEach(square => customizeSquare(square, false));
+    updateUndoRedoButtons();
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    const snapshot = Array.from(document.querySelectorAll('.square')).map(square => ({
+      square,
+      bg: square.style.backgroundColor,
+      border: square.style.borderColor,
+      icon: square.querySelector('img')?.src || ''
+    }));
+    undoStack.push(snapshot);
+    redoStack.length = 0;
+    document.querySelectorAll('.square').forEach(square => {
+      square.style.backgroundColor = '#eee';
+      square.style.borderColor = 'transparent';
+      square.innerHTML = '';
+    });
+    updateUndoRedoButtons();
+  });
+  
+  undoBtn.addEventListener('click', () => {
+    if (!undoStack.length) return;
+    const lastAction = undoStack.pop();
+    const actions = Array.isArray(lastAction) ? lastAction : [lastAction];
+    const redoSnapshot = actions.map(({ square }) => ({
+      square,
+      bg: square.style.backgroundColor,
+      border: square.style.borderColor,
+      icon: square.querySelector('img')?.src || ''
+    }));
+    redoStack.push(redoSnapshot);
+
+    actions.forEach(({ square, bg, border, icon }) => {
+      square.style.backgroundColor = bg;
+      square.style.borderColor = border;
+      square.innerHTML = '';
+      if (icon) {
+        const img = document.createElement('img');
+        img.src = icon;
+        img.alt = '';
+        square.appendChild(img);
+      }
+    });
+    updateUndoRedoButtons();
+  });
+
+  redoBtn.addEventListener('click', () => {
+    if (!redoStack.length) return;
+    const lastRedo = redoStack.pop();
+    const actions = Array.isArray(lastRedo) ? lastRedo : [lastRedo];
+
+    const undoSnapshot = actions.map(({ square }) => ({
+      square,
+      bg: square.style.backgroundColor,
+      border: square.style.borderColor,
+      icon: square.querySelector('img')?.src || ''
+    }));
+    undoStack.push(undoSnapshot);
+
+    actions.forEach(({ square, bg, border, icon }) => {
+      square.style.backgroundColor = bg;
+      square.style.borderColor = border;
+      square.innerHTML = '';
+      if (icon) {
+        const img = document.createElement('img');
+        img.src = icon;
+        img.alt = '';
+        square.appendChild(img);
+      }
+    });
+
+    updateUndoRedoButtons();
+  });
+
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+      e.preventDefault();
+      undoBtn.click();
+    }
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) {
+      e.preventDefault();
+      redoBtn.click();
+    }
+  });
+
+    document.getElementById('exportBtn').addEventListener('click', () => {
+    const gridInner = document.getElementById('gridInner');
+    const clone = gridInner.cloneNode(true);
+
+    const wrapper = document.createElement('div');
+    wrapper.style.position = 'absolute';
+    wrapper.style.top = '-9999px';
+    wrapper.style.left = '-9999px';
+    wrapper.style.background = 'white';
+    wrapper.style.padding = '20px';
+    wrapper.style.display = 'inline-block';
+    wrapper.appendChild(clone);
+
+    document.body.appendChild(wrapper);
+
+    html2canvas(wrapper).then(canvas => {
+      document.body.removeChild(wrapper);
+      const link = document.createElement('a');
+      link.download = 'crochet_layout.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  });
+
+    document.getElementById('randomizeBtn').addEventListener('click', () => {
+    const squares = document.querySelectorAll('.square');
+    const snapshot = Array.from(squares).map(square => ({
+      square,
+      bg: square.style.backgroundColor,
+      border: square.style.borderColor,
+      icon: square.querySelector('img')?.src || ''
+    }));
+    undoStack.push(snapshot);
+    redoStack.length = 0;
+
+    squares.forEach(square => {
+      const randomBG = presetBGColors[Math.floor(Math.random() * presetBGColors.length)];
+      const randomBorder = presetBorderColors[Math.floor(Math.random() * presetBorderColors.length)];
+      const randomIcon = Math.random() < 0.5 ? '' : iconPaths[Math.floor(Math.random() * iconPaths.length)];
+
+      square.style.backgroundColor = randomBG;
+      square.style.borderColor = randomBorder;
+      square.innerHTML = '';
+      if (randomIcon) {
+        const img = document.createElement('img');
+        img.src = randomIcon;
+        img.alt = '';
+        square.appendChild(img);
+      }
+    });
+
+    updateUndoRedoButtons();
+  });
+
+  init();
+})();
+</script>
 </body>
 </html>
