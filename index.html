@@ -27,7 +27,7 @@
     right: 334px;
     z-index: 100;
     height: 60px;
-    padding: 0 1rem;
+    padding: 0.5em 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -35,7 +35,7 @@
   }
 
   h1 {
-    margin: 0 0.2rem 0 0;
+    margin: 0 1rem 0 0.1rem;
     font-size: 1.2rem;
   }
 
@@ -69,7 +69,7 @@
   }
 
   #grid {
-  padding-top: 60px;
+    padding-top: 60px;
     flex: 1;
     display: grid;
     padding: 1rem;
@@ -115,7 +115,7 @@
   }
 
   .control-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.4rem;
   }
   .control-sub-group {
     background-color: #eeeeee;
@@ -129,6 +129,12 @@
     display: flex;
     gap: 0.5rem;
     align-items: center;"
+  }
+  .control-footer {
+    position: sticky;
+    bottom: 0;
+    padding-top: 0.5rem;
+    /* background-color: #ffffff; */
   }
 
   .color-palette {
@@ -153,12 +159,12 @@
 
   .icon-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
   }
 
   .icon-button {
-    height: 60px;
+    height: 56px;
     border: 2px solid transparent;
     background: #eeeeee;
     display: flex;
@@ -173,8 +179,8 @@
   }
 
   .icon-button img {
-    width: 54px;
-    height: 54px;
+    width: 52px;
+    height: 52px;
   }
 
   input[type="color"] {
@@ -282,6 +288,11 @@
     background-color: #ffffff;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
+  .getpatterns {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
 
   @media (max-width: 768px) {
     body {
@@ -301,7 +312,10 @@
 <div id="main-container">
   <header>
     <div class="button-group">
-      <h1>Animal Blanket Designer</h1>
+      <div>
+        <h1>Animal Blanket Designer</h1>
+        <span style="font-size: 0.9rem; color: #858585;">Edit then add on the grid 🎨</span>
+      </div>
       <select id="layout">
         <option value="4x4">4 x 4 squares</option>
         <option value="4x6">4 x 6 squares</option>
@@ -324,7 +338,10 @@
 </div>
 <aside id="controls">
   <div class="control-group">
-  <h2>Edit mode</h2>
+  <div class="getpatterns">
+    <h2>Edit mode</h2>
+    <a href="https://morganeyarn.com" target="_blank" style="font-size: 0.9rem;">Get patterns ↗</a>
+  </div>
   <div class="mode-toggle">
     <button type="button" class="mode-btn selected" data-mode="all">All</button>
     <button type="button" class="mode-btn" data-mode="color">Color</button>
@@ -349,13 +366,10 @@
     </div>
   </div>
   <div class="control-group">
-  <div style="display: flex; justify-content: space-between; align-items: baseline;">
     <h2>Square animals</h2>
-    <a href="https://morganeyarn.com" target="_blank" style="font-size: 0.9rem;">Get patterns ↗</a>
-  </div>
     <div class="icon-grid" id="iconGrid"></div>
   </div>
-  <div class="button-group-space-between">
+  <div class="control-footer button-group-space-between"">
     <button id="applyAllBtn" style="flex: 1;">Apply to all</button>
     <button id="randomizeBtn" style="flex: 1;">Randomize</button>
   </div>
@@ -385,6 +399,20 @@
       editMode = btn.dataset.mode;
       document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
+
+      // Show/hide sections based on mode
+      const colorControls = document.querySelectorAll('.control-group')[1];
+      const patternControls = document.querySelectorAll('.control-group')[2];
+      if (editMode === 'color') {
+        colorControls.style.display = 'block';
+        patternControls.style.display = 'none';
+      } else if (editMode === 'pattern') {
+        colorControls.style.display = 'none';
+        patternControls.style.display = 'block';
+      } else {
+        colorControls.style.display = 'block';
+        patternControls.style.display = 'block';
+      }
     });
   });
 
