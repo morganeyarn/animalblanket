@@ -59,11 +59,6 @@
     overflow: hidden;
   }
 
-  #main-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
   #grid {
     padding-top: 60px;
     flex: 1;
@@ -97,6 +92,7 @@
   .square img {
     max-width: 90%;
     max-height: 90%;
+    aspect-ratio: 1 / 1;
     pointer-events: none;
   }
 
@@ -283,64 +279,77 @@
     font-size: 0.9rem;
     color: #858585;
   }
-
-  @media (max-width: 768px) {
-    body {
-      flex-direction: column;
-    }
-    header {
-      right: 0;
-    }
-    #controls {
-      width: 100%;
-      height: auto;
-      border-left: none;
-      border-top: 1px solid #ddd;
-    }
-    .hide-xs {
-      display: none;
-    }
-  }
-
+  
   @media (max-height: 780px) {
     .icon-grid {
       grid-template-columns: repeat(4, 1fr);
     }
   }
 
+  @media (max-width: 1260px) {
+    .hide-xs {
+      display: none;
+    }
+    #gridInner {
+      width: 100%;
+      grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    }
+  }
+
+  @media (max-width: 800px) {
+    header {
+      right: 0;
+    }
+    #controls {
+      position: fixed;
+      top: 120px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1001;
+      box-sizing: border-box; 
+      border-top: 1px solid #ddd;
+      border-radius: 0.5rem 0.5rem 0;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+    }
+    .icon-grid {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
 </style>
 </head>
 <body>
-<div id="main-container">
-  <header>
-    <div class="button-group">
-      <div class="hide-xs">
-        <h1>Animal Crochet Blanket Designer <span class="badge">beta</span></h1>
-        <span class="muted">Edit then add on the grid. <a href="https://morganeyarn.com" target="_blank">Get patterns ↗</a></span>
-      </div>
-      <select id="layout">
-        <option value="3x4">3 x 4 squares</option>
-        <option value="3x5">3 x 5 squares</option>
-        <option value="4x4">4 x 4 squares</option>
-        <option value="4x6">4 x 6 squares</option>
-        <option value="5x5">5 x 5 squares</option>
-        <option value="5x6" selected="selected">5 x 6 squares</option>
-        <option value="6x6">6 x 6 squares</option>
-        <option value="6x8">6 x 8 squares</option>
-      </select>
+<header>
+  <div class="button-group">
+    <div class="hide-xs">
+      <h1>Animal Crochet Blanket Designer <span class="badge">beta</span></h1>
+      <span class="muted">Edit then add on the grid. <a href="https://morganeyarn.com" target="_blank">Get patterns ↗</a></span>
     </div>
-    <div class="button-group">
-    <button id="undoBtn" disabled><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M280-200v-80h284q63 0 109.5-40T720-420q0-60-46.5-100T564-560H312l104 104-56 56-200-200 200-200 56 56-104 104h252q97 0 166.5 63T800-420q0 94-69.5 157T564-200H280Z"/></svg></button>
-    <button id="redoBtn" disabled><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M396-200q-97 0-166.5-63T160-420q0-94 69.5-157T396-640h252L544-744l56-56 200 200-200 200-56-56 104-104H396q-63 0-109.5 40T240-420q0 60 46.5 100T396-280h284v80H396Z"/></svg></button>
-    <button id="clearBtn" disabled class="hide-xs"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg></button>
-    <a href="https://morganeyarn.com/contact" target="_blank"><button ><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="m480-80-10-120h-10q-142 0-241-99t-99-241q0-142 99-241t241-99q71 0 132.5 26.5t108 73q46.5 46.5 73 108T800-540q0 75-24.5 144t-67 128q-42.5 59-101 107T480-80Zm80-146q71-60 115.5-140.5T720-540q0-109-75.5-184.5T460-800q-109 0-184.5 75.5T200-540q0 109 75.5 184.5T460-280h100v54Zm-101-95q17 0 29-12t12-29q0-17-12-29t-29-12q-17 0-29 12t-12 29q0 17 12 29t29 12Zm-29-127h60q0-30 6-42t38-44q18-18 30-39t12-45q0-51-34.5-76.5T460-720q-44 0-74 24.5T344-636l56 22q5-17 19-33.5t41-16.5q27 0 40.5 15t13.5 33q0 17-10 30.5T480-558q-35 30-42.5 47.5T430-448Zm30-65Z"/></svg></button></a>
-    <button id="exportBtn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg></button>
-    </div>
-  </header>
-  <main>
-    <div id="grid"><div id="gridInner"></div></div>
-  </main>
-</div>
+    <select id="layout">
+      <option value="3x4">3 x 4 squares</option>
+      <option value="3x5">3 x 5 squares</option>
+      <option value="4x4">4 x 4 squares</option>
+      <option value="4x6">4 x 6 squares</option>
+      <option value="5x5">5 x 5 squares</option>
+      <option value="5x6" selected="selected">5 x 6 squares</option>
+      <option value="6x6">6 x 6 squares</option>
+      <option value="6x8">6 x 8 squares</option>
+    </select>
+  </div>
+  <div class="button-group">
+  <button id="toggleControlsBtn">X</button>
+  <button id="undoBtn" disabled><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M280-200v-80h284q63 0 109.5-40T720-420q0-60-46.5-100T564-560H312l104 104-56 56-200-200 200-200 56 56-104 104h252q97 0 166.5 63T800-420q0 94-69.5 157T564-200H280Z"/></svg></button>
+  <button id="redoBtn" disabled><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M396-200q-97 0-166.5-63T160-420q0-94 69.5-157T396-640h252L544-744l56-56 200 200-200 200-56-56 104-104H396q-63 0-109.5 40T240-420q0 60 46.5 100T396-280h284v80H396Z"/></svg></button>
+  <button id="clearBtn" disabled class="hide-xs"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg></button>
+  <a href="https://morganeyarn.com/contact" target="_blank"><button ><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="m480-80-10-120h-10q-142 0-241-99t-99-241q0-142 99-241t241-99q71 0 132.5 26.5t108 73q46.5 46.5 73 108T800-540q0 75-24.5 144t-67 128q-42.5 59-101 107T480-80Zm80-146q71-60 115.5-140.5T720-540q0-109-75.5-184.5T460-800q-109 0-184.5 75.5T200-540q0 109 75.5 184.5T460-280h100v54Zm-101-95q17 0 29-12t12-29q0-17-12-29t-29-12q-17 0-29 12t-12 29q0 17 12 29t29 12Zm-29-127h60q0-30 6-42t38-44q18-18 30-39t12-45q0-51-34.5-76.5T460-720q-44 0-74 24.5T344-636l56 22q5-17 19-33.5t41-16.5q27 0 40.5 15t13.5 33q0 17-10 30.5T480-558q-35 30-42.5 47.5T430-448Zm30-65Z"/></svg></button></a>
+  <button id="exportBtn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg></button>
+  </div>
+</header>
+<main>
+  <div id="grid"><div id="gridInner"></div></div>
+</main>
 <aside id="controls">
   <div class="control-group">
   <h2>Edit mode</h2>
@@ -395,14 +404,20 @@
   const presetBorderColors = ['#495f4a', '#e1c8a7', '#cd896d', '#506584'];
   const iconPaths = Array.from({ length: 19 }, (_, i) => `icons/icon${i + 1}.svg`);
 
+  const currentSelection = {
+    bg: '#ffffff',
+    border: 'transparent',
+    icon: ''
+  };
+
   let editMode = 'all';
+  let mobileMode = false;
+
   document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       editMode = btn.dataset.mode;
       document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
-
-      // Show/hide sections based on mode
       const colorControls = document.querySelectorAll('.control-group')[1];
       const patternControls = document.querySelectorAll('.control-group')[2];
       if (editMode === 'color') {
@@ -417,12 +432,6 @@
       }
     });
   });
-
-  const currentSelection = {
-    bg: '#ffffff',
-    border: 'transparent',
-    icon: ''
-  };
 
   function createPalette(container, colors, key) {
     container.innerHTML = '';
@@ -802,6 +811,19 @@
     });
     clearBtn.disabled = false;
     updateUndoRedoButtons();
+  });
+
+
+  const toggleBtn = document.getElementById('toggleControlsBtn');
+  toggleBtn.addEventListener('click', () => {
+    const controls = document.getElementById('controls');
+    if (mobileMode === true) {
+      controls.style.display = 'none';
+      mobileMode = false;
+    } else {
+      controls.style.display = 'block';
+      mobileMode = true;
+    }
   });
 
   init();
