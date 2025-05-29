@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Crochet Blanket Planner</title>
+  <title>Animal Blanket Designer</title>
   <style>
   html, body {
     background-image: url(https://morganepeng.com/img/dot_grid2.png);
@@ -14,12 +14,10 @@
     height: 100%;
     font-family: 'Inter', sans-serif;
   }
-
   body {
     display: flex;
     height: 100vh;
   }
-
   header {
     position: absolute;
     top: 0;
@@ -31,30 +29,24 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
   }
-
   h1 {
     margin: 0 1rem 0 0.1rem;
     font-size: 1.2rem;
   }
-
   h2 {
     font-weight: bold;
     margin: 0 0 0.5rem;
     font-size: 1rem;
   }
-  
   h3 {
     font-weight: normal;
     font-size: 1rem;
     margin: 0 0 0.5rem;
   }
-
   select {
     padding-right: 0.4rem;
   }
-
   a:link {
     color: #858585;
   }
@@ -72,7 +64,6 @@
     display: flex;
     flex-direction: column;
   }
-
   #grid {
     padding-top: 60px;
     flex: 1;
@@ -83,24 +74,12 @@
     align-content: center;
     overflow-y: auto;
   }
-
   #gridInner {
     display: grid;
     gap: 2px;
     background: white;
     padding: 0;
   }
-
-  #controls {
-    width: 300px;
-    padding: 1rem;
-    border-left: 1px solid #ddd;
-    background: #fff;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-  }
-
   .square {
     width: 100px;
     height: 100px;
@@ -115,13 +94,21 @@
     -webkit-user-select: none;
     -ms-user-select: none;
   }
-
   .square img {
     max-width: 90%;
     max-height: 90%;
     pointer-events: none;
   }
 
+  #controls {
+    width: 300px;
+    padding: 1rem;
+    border-left: 1px solid #ddd;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
   .control-group {
     margin-bottom: 1.4rem;
   }
@@ -144,13 +131,11 @@
     padding: 0 0 0.5rem 0;
     z-index: 1;
   }
-
   .color-palette {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
   }
-
   .color-button {
     width: 32px;
     height: 32px;
@@ -160,11 +145,9 @@
     position: relative;
     box-sizing: border-box;
   }
-
   .color-button.selected {
     border-color: #000;
   }
-
   .badge {
     font-size: 0.8rem;
     background: #e0e7ff;
@@ -172,13 +155,11 @@
     border-radius: 6px;
     vertical-align: middle;
   }
-
   .icon-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
   }
-
   .icon-button {
     height: 56px;
     border: 2px solid transparent;
@@ -189,26 +170,20 @@
     cursor: pointer;
     border-radius: 8px;
   }
-
   .icon-button.selected {
     border-color: black;
   }
-
   .icon-button img {
     width: 52px;
     height: 52px;
   }
-
   input[type="color"] {
     width: 32px;
     height: 32px;
-    /* border: 2px solid #ccc; */
     box-sizing: border-box;
   }
-
   input[type="color"].selected,
   input[type="color"]:focus {
-    /* border: 2px solid #333333; */
     outline: none;
   }
 
@@ -219,7 +194,6 @@
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
-
   select {
     border: 1px solid #ccc;
     background: white;
@@ -237,7 +211,6 @@
     background-position: right 0.75em center;
     background-size: 0.65em auto;
   }
-
   select:hover {
     background: #f9f9f9;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpolyline points='4,8 10,14 16,8' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -245,7 +218,6 @@
     background-position: right 0.75em center;
     background-size: 0.65em auto;
   }
-
   button {
     border: 1px solid #ccc;
     background: #ffffff;
@@ -261,11 +233,7 @@
   button:hover {
     background: #f9f9f9;
   }
-  .flex-grow {
-  flex: 1;
-}
-
-button.export {
+  button.export {
     background-color: #3b82f6;
     color: white;
     border-color: #3b82f6;
@@ -308,33 +276,44 @@ button.export {
     background-color: #ffffff;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
-  .getpatterns {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
+  .flex-grow {
+  flex: 1;
+  }
+  .muted {
+    font-size: 0.9rem;
+    color: #858585;
   }
 
   @media (max-width: 768px) {
     body {
       flex-direction: column;
     }
-
     #controls {
       width: 100%;
       height: auto;
       border-left: none;
       border-top: 1px solid #ddd;
     }
+    .hide-xs {
+      display: none;
+    }
   }
+
+  @media (max-height: 780px) {
+    .icon-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
 </style>
 </head>
 <body>
 <div id="main-container">
   <header>
     <div class="button-group">
-      <div>
-        <h1>Animal Blanket Designer <span class="badge">beta</span></h1>
-        <span style="font-size: 0.9rem; color: #858585;">Edit then add on the grid 🎨</span>
+      <div class="hide-xs">
+        <h1>Animal Crochet Blanket Designer <span class="badge">beta</span></h1>
+        <span class="muted">Edit then add on the grid. <a href="https://morganeyarn.com" target="_blank">Get patterns ↗</a></span>
       </div>
       <select id="layout">
         <option value="3x4">3 x 4 squares</option>
@@ -350,7 +329,7 @@ button.export {
     <div class="button-group">
     <button id="undoBtn" disabled><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M280-200v-80h284q63 0 109.5-40T720-420q0-60-46.5-100T564-560H312l104 104-56 56-200-200 200-200 56 56-104 104h252q97 0 166.5 63T800-420q0 94-69.5 157T564-200H280Z"/></svg></button>
     <button id="redoBtn" disabled><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M396-200q-97 0-166.5-63T160-420q0-94 69.5-157T396-640h252L544-744l56-56 200 200-200 200-56-56 104-104H396q-63 0-109.5 40T240-420q0 60 46.5 100T396-280h284v80H396Z"/></svg></button>
-    <button id="clearBtn" disabled><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg></button>
+    <button id="clearBtn" disabled class="hide-xs"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg></button>
     <a href="https://morganeyarn.com/contact" target="_blank"><button ><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="m480-80-10-120h-10q-142 0-241-99t-99-241q0-142 99-241t241-99q71 0 132.5 26.5t108 73q46.5 46.5 73 108T800-540q0 75-24.5 144t-67 128q-42.5 59-101 107T480-80Zm80-146q71-60 115.5-140.5T720-540q0-109-75.5-184.5T460-800q-109 0-184.5 75.5T200-540q0 109 75.5 184.5T460-280h100v54Zm-101-95q17 0 29-12t12-29q0-17-12-29t-29-12q-17 0-29 12t-12 29q0 17 12 29t29 12Zm-29-127h60q0-30 6-42t38-44q18-18 30-39t12-45q0-51-34.5-76.5T460-720q-44 0-74 24.5T344-636l56 22q5-17 19-33.5t41-16.5q27 0 40.5 15t13.5 33q0 17-10 30.5T480-558q-35 30-42.5 47.5T430-448Zm30-65Z"/></svg></button></a>
     <button id="exportBtn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg></button>
     </div>
@@ -361,10 +340,7 @@ button.export {
 </div>
 <aside id="controls">
   <div class="control-group">
-  <div class="getpatterns">
-    <h2>Edit mode</h2>
-    <a href="https://morganeyarn.com" target="_blank" style="font-size: 0.9rem;">Get patterns ↗</a>
-  </div>
+  <h2>Edit mode</h2>
   <div class="mode-toggle">
     <button type="button" class="mode-btn selected" data-mode="all">All</button>
     <button type="button" class="mode-btn" data-mode="color">Color</button>
