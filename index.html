@@ -229,21 +229,18 @@
   button:hover {
     background: #f9f9f9;
   }
-  button.export {
-    background-color: #3b82f6;
-    color: white;
-    border-color: #3b82f6;
-  }
-  button.export:hover {
-    background-color: #2563eb;
-  }
   .button-group {
     display: flex; align-items: center; gap: 0.5rem; align-self: center;
   }
   .button-group-space-between {
     display: flex; justify-content: space-between; gap: 0.5rem;
   }
-    
+  button.palette {
+    display: none;
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+  }
   .mode-toggle {
     display: flex;
     width: 100%;
@@ -287,22 +284,37 @@
   }
 
   @media (max-width: 1260px) {
-    .hide-xs {
+    .hide-ms {
       display: none;
     }
-    #gridInner {
-      width: 100%;
-      grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    #controls {
+      display: block; 
+      width: 300px;
+      padding: 1rem;
+      border-left: 1px solid #ddd;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
     }
   }
 
   @media (max-width: 800px) {
+    .hide-xs {
+      display: none;
+    }
     header {
       right: 0;
+      z-index: 1002;
+    }
+    button.palette {
+      display: block;
     }
     #controls {
+      padding: 2.5rem 1rem 1rem 1rem;
+      display: none; 
       position: fixed;
-      top: 120px;
+      top: 0px;
       left: 0;
       right: 0;
       bottom: 0;
@@ -323,8 +335,8 @@
 <body>
 <header>
   <div class="button-group">
-    <div class="hide-xs">
-      <h1>Animal Crochet Blanket Designer <span class="badge">beta</span></h1>
+    <div class="hide-ms">
+      <h1>Animal Blanket Designer <span class="badge">beta</span></h1>
       <span class="muted">Edit then add on the grid. <a href="https://morganeyarn.com" target="_blank">Get patterns ↗</a></span>
     </div>
     <select id="layout">
@@ -339,12 +351,12 @@
     </select>
   </div>
   <div class="button-group">
-  <button id="toggleControlsBtn">X</button>
-  <button id="undoBtn" disabled><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M280-200v-80h284q63 0 109.5-40T720-420q0-60-46.5-100T564-560H312l104 104-56 56-200-200 200-200 56 56-104 104h252q97 0 166.5 63T800-420q0 94-69.5 157T564-200H280Z"/></svg></button>
-  <button id="redoBtn" disabled><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M396-200q-97 0-166.5-63T160-420q0-94 69.5-157T396-640h252L544-744l56-56 200 200-200 200-56-56 104-104H396q-63 0-109.5 40T240-420q0 60 46.5 100T396-280h284v80H396Z"/></svg></button>
-  <button id="clearBtn" disabled class="hide-xs"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg></button>
-  <a href="https://morganeyarn.com/contact" target="_blank"><button ><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="m480-80-10-120h-10q-142 0-241-99t-99-241q0-142 99-241t241-99q71 0 132.5 26.5t108 73q46.5 46.5 73 108T800-540q0 75-24.5 144t-67 128q-42.5 59-101 107T480-80Zm80-146q71-60 115.5-140.5T720-540q0-109-75.5-184.5T460-800q-109 0-184.5 75.5T200-540q0 109 75.5 184.5T460-280h100v54Zm-101-95q17 0 29-12t12-29q0-17-12-29t-29-12q-17 0-29 12t-12 29q0 17 12 29t29 12Zm-29-127h60q0-30 6-42t38-44q18-18 30-39t12-45q0-51-34.5-76.5T460-720q-44 0-74 24.5T344-636l56 22q5-17 19-33.5t41-16.5q27 0 40.5 15t13.5 33q0 17-10 30.5T480-558q-35 30-42.5 47.5T430-448Zm30-65Z"/></svg></button></a>
-  <button id="exportBtn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg></button>
+    <button id="undoBtn" disabled><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M280-200v-80h284q63 0 109.5-40T720-420q0-60-46.5-100T564-560H312l104 104-56 56-200-200 200-200 56 56-104 104h252q97 0 166.5 63T800-420q0 94-69.5 157T564-200H280Z"/></svg></button>
+    <button id="redoBtn" disabled><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M396-200q-97 0-166.5-63T160-420q0-94 69.5-157T396-640h252L544-744l56-56 200 200-200 200-56-56 104-104H396q-63 0-109.5 40T240-420q0 60 46.5 100T396-280h284v80H396Z"/></svg></button>
+    <button id="clearBtn" disabled class="hide-ms"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg></button>
+    <a href="https://morganeyarn.com/contact" target="_blank"><button id="infoBtn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m480-80-10-120h-10q-142 0-241-99t-99-241q0-142 99-241t241-99q71 0 132.5 26.5t108 73q46.5 46.5 73 108T800-540q0 75-24.5 144t-67 128q-42.5 59-101 107T480-80Zm80-146q71-60 115.5-140.5T720-540q0-109-75.5-184.5T460-800q-109 0-184.5 75.5T200-540q0 109 75.5 184.5T460-280h100v54Zm-101-95q17 0 29-12t12-29q0-17-12-29t-29-12q-17 0-29 12t-12 29q0 17 12 29t29 12Zm-29-127h60q0-30 6-42t38-44q18-18 30-39t12-45q0-51-34.5-76.5T460-720q-44 0-74 24.5T344-636l56 22q5-17 19-33.5t41-16.5q27 0 40.5 15t13.5 33q0 17-10 30.5T480-558q-35 30-42.5 47.5T430-448Zm30-65Z"/></svg></button></a>
+    <button id="exportBtn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg></button>
+    <button class="palette" id="toggleControlsBtn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg></button>
   </div>
 </header>
 <main>
@@ -380,7 +392,7 @@
     <h2>Square animals</h2>
     <div class="icon-grid" id="iconGrid"></div>
   </div>
-  <div class="control-footer button-group-space-between"">
+  <div class="hide-xs control-footer button-group-space-between"">
     <button id="applyAllBtn" class="flex-grow">Apply to all</button>
     <button id="randomizeBtn" class="flex-grow">Randomize</button>
   </div>
@@ -388,6 +400,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 (() => {
+  const toggleBtn = document.getElementById('toggleControlsBtn');
   const grid = document.getElementById('grid');
   const layoutSelect = document.getElementById('layout');
   const bgPalette = document.getElementById('bgPalette');
@@ -397,6 +410,7 @@
   const iconGrid = document.getElementById('iconGrid');
   const undoBtn = document.getElementById('undoBtn');
   const redoBtn = document.getElementById('redoBtn');
+  const infoBtn = document.getElementById('infoBtn');
   const undoStack = [];
   const redoStack = [];
 
@@ -813,16 +827,46 @@
     updateUndoRedoButtons();
   });
 
+ function setMobileControls(isOpen) {
+    const show = !isOpen;
+    controls.style.display = isOpen ? 'block' : 'none';
+    layout.style.display = show ? 'block' : 'none';
+    undoBtn.style.display = show ? 'block' : 'none';
+    redoBtn.style.display = show ? 'block' : 'none';
+    clearBtn.style.display = show ? 'block' : 'none';
+    infoBtn.style.display = show ? 'block' : 'none';
+    exportBtn.style.display = show ? 'block' : 'none';
 
-  const toggleBtn = document.getElementById('toggleControlsBtn');
+    toggleBtn.classList.toggle('open', isOpen);
+    toggleBtn.classList.toggle('palette', !isOpen);
+
+    toggleBtn.innerHTML = isOpen
+      ? `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>`
+      : `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;
+  }
+
   toggleBtn.addEventListener('click', () => {
-    const controls = document.getElementById('controls');
-    if (mobileMode === true) {
-      controls.style.display = 'none';
-      mobileMode = false;
+    const isOpen = !toggleBtn.classList.contains('open');
+    setMobileControls(isOpen);
+  });
+
+  window.addEventListener('resize', () => {
+    const isMobile = window.innerWidth < 800;
+    const isOpen = toggleBtn.classList.contains('open');
+
+    if (isMobile) {
+      setMobileControls(isOpen);
     } else {
-      controls.style.display = 'block';
-      mobileMode = true;
+      controls.style.display = 'flex';
+      toggleBtn.classList.remove('open');
+      toggleBtn.classList.add('palette');
+      layout.style.display = 'block';
+      undoBtn.style.display = 'block';
+      redoBtn.style.display = 'block';
+      clearBtn.style.display = 'block';
+      infoBtn.style.display = 'block';
+      exportBtn.style.display = 'block';
+      toggleBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>`;
     }
   });
 
