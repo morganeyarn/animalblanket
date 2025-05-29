@@ -303,6 +303,11 @@
       flex-direction: column;
       overflow-y: auto;
     }
+    .square {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      height: auto !important;
+    }
   }
 
   @media (max-width: 800px) {
@@ -347,14 +352,14 @@
       <span class="muted">Edit then add on the grid. <a href="https://morganeyarn.com" target="_blank">Get patterns ↗</a></span>
     </div>
     <select id="layout">
-      <option value="3x4">3 x 4 squares</option>
-      <option value="3x5">3 x 5 squares</option>
-      <option value="4x4">4 x 4 squares</option>
-      <option value="4x6">4 x 6 squares</option>
-      <option value="5x5">5 x 5 squares</option>
-      <option value="5x6" selected="selected">5 x 6 squares</option>
-      <option value="6x6">6 x 6 squares</option>
-      <option value="6x8">6 x 8 squares</option>
+      <option value="3x4" data-short="3 x 4">3 x 4 squares</option>
+      <option value="3x5" data-short="3 x 5">3 x 5 squares</option>
+      <option value="4x4" data-short="4 x 4">4 x 4 squares</option>
+      <option value="4x6" data-short="4 x 6">4 x 6 squares</option>
+      <option value="5x5" data-short="5 x 5">5 x 5 squares</option>
+      <option value="5x6" data-short="5 x 6" selected>5 x 6 squares</option>
+      <option value="6x6" data-short="6 x 6">6 x 6 squares</option>
+      <option value="6x8" data-short="6 x 8">6 x 8 squares</option>
     </select>
   </div>
   <div class="button-group">
@@ -524,7 +529,7 @@
     const [cols, rows] = size.split('x').map(Number);
     const gridInner = document.getElementById('gridInner');
     gridInner.style.display = 'grid';
-    gridInner.style.gridTemplateColumns = `repeat(${cols}, 100px)`;
+    gridInner.style.gridTemplateColumns = `repeat(${cols}, minmax(60px, 100px))`;
     gridInner.innerHTML = '';
 
     let isPainting = false;
@@ -834,12 +839,21 @@
     });
     clearBtn.disabled = false;
     updateUndoRedoButtons();
+    updateLayoutLabels();
   });
 
  function setMobileControls(isOpen) {
     controls.style.display = isOpen ? 'block' : 'none';
     closeBtn.style.display = isOpen ? 'flex' : 'none';
     header.style.display = isOpen ? 'none' : 'flex';
+  }
+  function updateLayoutLabels() {
+    const isMobile = window.innerWidth < 800;
+    Array.from(layoutSelect.options).forEach(option => {
+      const fullLabel = option.value.replace('x', ' x ') + ' squares';
+      const shortLabel = option.getAttribute('data-short');
+      option.textContent = isMobile ? shortLabel : fullLabel;
+    });
   }
   toggleBtn.addEventListener('click', () => {
     setMobileControls(true);
@@ -852,11 +866,13 @@
       controls.style.display = 'flex';
       closeBtn.style.display = 'none';
       header.style.display = 'flex';
+      updateLayoutLabels();
     } else {
       // If previously opened in desktop and shrinks to mobile, keep controls hidden until toggle
       controls.style.display = 'none';
       closeBtn.style.display = 'flex';   
       header.style.display = 'flex';   
+      updateLayoutLabels();
     }
   });
 
