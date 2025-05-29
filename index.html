@@ -13,6 +13,7 @@
     padding: 0;
     height: 100%;
     font-family: 'Inter', sans-serif;
+    touch-action: manipulation;
   }
   body {
     display: flex;
@@ -338,7 +339,7 @@
       box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
     }
     .icon-grid {
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(6, 1fr);
     }
   }
 </style>
@@ -405,7 +406,7 @@
     <h2>Square animals</h2>
     <div class="icon-grid" id="iconGrid"></div>
   </div>
-  <div class="hide-xs control-footer button-group-space-between"">
+  <div class="control-footer button-group-space-between">
     <button id="applyAllBtn" class="flex-grow">Apply to all</button>
     <button id="randomizeBtn" class="flex-grow">Randomize</button>
   </div>
@@ -525,7 +526,7 @@
     selectedBtn.classList.add('selected');
   }
 
-  function createGrid(size) {
+function createGrid(size) {
     const [cols, rows] = size.split('x').map(Number);
     const gridInner = document.getElementById('gridInner');
     gridInner.style.display = 'grid';
@@ -534,22 +535,18 @@
 
     let isPainting = false;
     let currentBulk = [];
-    document.addEventListener('mouseup', () => {
+
+    function endBulkPaint() {
       if (isPainting && currentBulk.length) {
         undoStack.push([...currentBulk]);
         redoStack.length = 0;
         updateUndoRedoButtons();
       }
       isPainting = false;
-    });
-    document.addEventListener('touchend', () => {
-      if (isPainting && currentBulk.length) {
-        undoStack.push([...currentBulk]);
-        redoStack.length = 0;
-        updateUndoRedoButtons();
-      }
-      isPainting = false;
-    });
+    }
+
+    gridInner.addEventListener('mouseup', endBulkPaint);
+    gridInner.addEventListener('touchend', endBulkPaint, { passive: true });
 
     for (let i = 0; i < cols * rows; i++) {
       const square = document.createElement('div');
@@ -568,14 +565,14 @@
       square.addEventListener('mouseenter', () => {
         if (isPainting) {
           if (!currentBulk.find(s => s.square === square)) {
-          currentBulk.push({
-            square,
-            bg: square.style.backgroundColor,
-            border: square.style.borderColor,
-            icon: square.querySelector('img')?.src || ''
-          });
-        }
-        customizeSquare(square, false);
+            currentBulk.push({
+              square,
+              bg: square.style.backgroundColor,
+              border: square.style.borderColor,
+              icon: square.querySelector('img')?.src || ''
+            });
+          }
+          customizeSquare(square, false);
         }
       });
       square.addEventListener('touchstart', (e) => {
@@ -648,6 +645,7 @@
     createIconGrid();
     createGrid(layoutSelect.value);
     updateUndoRedoButtons(); 
+    updateLayoutLabels();
   }
 
   layoutSelect.addEventListener('change', () => {
@@ -697,6 +695,7 @@
     undoStack.push(snapshot);
     redoStack.length = 0;
     document.querySelectorAll('.square').forEach(square => customizeSquare(square, false));
+    if (window.innerWidth < 800) setMobileControls(false);
     updateUndoRedoButtons();
   });
 
@@ -768,7 +767,6 @@
         square.appendChild(img);
       }
     });
-
     updateUndoRedoButtons();
   });
 
@@ -838,8 +836,8 @@
       }
     });
     clearBtn.disabled = false;
+    if (window.innerWidth < 800) setMobileControls(false);
     updateUndoRedoButtons();
-    updateLayoutLabels();
   });
 
  function setMobileControls(isOpen) {
