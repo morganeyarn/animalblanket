@@ -339,7 +339,7 @@
       box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
     }
     .icon-grid {
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(4, 1fr);
     }
   }
 </style>
@@ -406,7 +406,7 @@
     <h2>Square animals</h2>
     <div class="icon-grid" id="iconGrid"></div>
   </div>
-  <div class="control-footer button-group-space-between">
+  <div class="control-footer button-group-space-between hide-xs">
     <button id="applyAllBtn" class="flex-grow">Apply to all</button>
     <button id="randomizeBtn" class="flex-grow">Randomize</button>
   </div>
@@ -464,7 +464,6 @@
 
   function createPalette(container, colors, key) {
     container.innerHTML = '';
-
     if (key === 'border') {
       const transparentBtn = document.createElement('div');
       transparentBtn.className = 'color-button selected';
@@ -526,7 +525,7 @@
     selectedBtn.classList.add('selected');
   }
 
-function createGrid(size) {
+  function createGrid(size) {
     const [cols, rows] = size.split('x').map(Number);
     const gridInner = document.getElementById('gridInner');
     gridInner.style.display = 'grid';
@@ -547,30 +546,19 @@ function createGrid(size) {
 
     gridInner.addEventListener('mouseup', endBulkPaint);
     gridInner.addEventListener('touchend', endBulkPaint, { passive: true });
-
     for (let i = 0; i < cols * rows; i++) {
       const square = document.createElement('div');
       square.className = 'square';
       square.addEventListener('mousedown', () => {
         isPainting = true;
         currentBulk = [];
-        currentBulk.push({
-          square,
-          bg: square.style.backgroundColor,
-          border: square.style.borderColor,
-          icon: square.querySelector('img')?.src || ''
-        });
+        currentBulk.push(snapshotSquare(square));
         customizeSquare(square, false);
       });
       square.addEventListener('mouseenter', () => {
         if (isPainting) {
           if (!currentBulk.find(s => s.square === square)) {
-            currentBulk.push({
-              square,
-              bg: square.style.backgroundColor,
-              border: square.style.borderColor,
-              icon: square.querySelector('img')?.src || ''
-            });
+            currentBulk.push(snapshotSquare(square));
           }
           customizeSquare(square, false);
         }
@@ -607,15 +595,18 @@ function createGrid(size) {
     }
   }
 
+  function snapshotSquare(square) {
+    return {
+      square,
+      bg: square.style.backgroundColor,
+      border: square.style.borderColor,
+      icon: square.querySelector('img')?.src || ''
+    };
+  }
   function customizeSquare(square, record = true) {
     clearBtn.disabled = false;
     if (record) {
-      undoStack.push({
-        square,
-        bg: square.style.backgroundColor,
-        border: square.style.borderColor,
-        icon: square.querySelector('img')?.src || ''
-      });
+      undoStack.push([snapshotSquare(square)]);
       redoStack.length = 0;
       updateUndoRedoButtons();
     }
@@ -634,18 +625,27 @@ function createGrid(size) {
     }
   }
 
+  document.addEventListener('mouseup', () => {
+    const gridInner = document.getElementById('gridInner');
+    const event = new Event('mouseup');
+    gridInner.dispatchEvent(event);
+  });
+
+  document.addEventListener('touchend', () => {
+    const gridInner = document.getElementById('gridInner');
+    const event = new Event('touchend');
+    gridInner.dispatchEvent(event);
+  });
+
+  function clearSquareContent(square) {
+    while (square.firstChild) {
+      square.removeChild(square.firstChild);
+    }
+  }
+
   function updateUndoRedoButtons() {
     undoBtn.disabled = undoStack.length === 0;
     redoBtn.disabled = redoStack.length === 0;
-  }
-
-  function init() {
-    createPalette(bgPalette, presetBGColors, 'bg');
-    createPalette(borderPalette, presetBorderColors, 'border');
-    createIconGrid();
-    createGrid(layoutSelect.value);
-    updateUndoRedoButtons(); 
-    updateLayoutLabels();
   }
 
   layoutSelect.addEventListener('change', () => {
@@ -683,56 +683,48 @@ function createGrid(size) {
     });
     borderColorInput.classList.toggle('selected', !matched);
   });
+  
+  function init() {
+    createPalette(bgPalette, presetBGColors, 'bg');
+    createPalette(borderPalette, presetBorderColors, 'border');
+    createIconGrid();
+    createGrid(layoutSelect.value);
+    updateUndoRedoButtons(); 
+    updateLayoutLabels();
+  }
 
-  document.getElementById('applyAllBtn').addEventListener('click', () => {
+  applyAllBtn.addEventListener('click', () => {
     const squares = document.querySelectorAll('.square');
-    const snapshot = Array.from(squares).map(square => ({
-      square,
-      bg: square.style.backgroundColor,
-      border: square.style.borderColor,
-      icon: square.querySelector('img')?.src || ''
-    }));
+    const snapshot = Array.from(squares).map(square => (snapshotSquare(square)));
     undoStack.push(snapshot);
     redoStack.length = 0;
     document.querySelectorAll('.square').forEach(square => customizeSquare(square, false));
-    if (window.innerWidth < 800) setMobileControls(false);
     updateUndoRedoButtons();
   });
 
-  document.getElementById('clearBtn').addEventListener('click', () => {
-    const snapshot = Array.from(document.querySelectorAll('.square')).map(square => ({
-      square,
-      bg: square.style.backgroundColor,
-      border: square.style.borderColor,
-      icon: square.querySelector('img')?.src || ''
-    }));
+  clearBtn.addEventListener('click', () => {
+    const squares = document.querySelectorAll('.square');
+    const snapshot = Array.from(squares).map(snapshotSquare);
     undoStack.push(snapshot);
     redoStack.length = 0;
-    document.querySelectorAll('.square').forEach(square => {
+    squares.forEach(square => {
       square.style.backgroundColor = '#eee';
       square.style.borderColor = 'transparent';
-      square.innerHTML = '';
+      clearSquareContent(square);
     });
     clearBtn.disabled = true;
     updateUndoRedoButtons();
   });
-  
   undoBtn.addEventListener('click', () => {
-    if (!undoStack.length) return;
     const lastAction = undoStack.pop();
+    if (!lastAction) return;
     const actions = Array.isArray(lastAction) ? lastAction : [lastAction];
-    const redoSnapshot = actions.map(({ square }) => ({
-      square,
-      bg: square.style.backgroundColor,
-      border: square.style.borderColor,
-      icon: square.querySelector('img')?.src || ''
-    }));
+    const redoSnapshot = actions.map(({ square }) => snapshotSquare(square));
     redoStack.push(redoSnapshot);
-
     actions.forEach(({ square, bg, border, icon }) => {
       square.style.backgroundColor = bg;
       square.style.borderColor = border;
-      square.innerHTML = '';
+      clearSquareContent(square);
       if (icon) {
         const img = document.createElement('img');
         img.src = icon;
@@ -744,22 +736,14 @@ function createGrid(size) {
   });
 
   redoBtn.addEventListener('click', () => {
-    if (!redoStack.length) return;
-    const lastRedo = redoStack.pop();
-    const actions = Array.isArray(lastRedo) ? lastRedo : [lastRedo];
-
-    const undoSnapshot = actions.map(({ square }) => ({
-      square,
-      bg: square.style.backgroundColor,
-      border: square.style.borderColor,
-      icon: square.querySelector('img')?.src || ''
-    }));
+    const nextAction = redoStack.pop();
+    if (!nextAction) return;
+    const undoSnapshot = nextAction.map(({ square }) => snapshotSquare(square));
     undoStack.push(undoSnapshot);
-
-    actions.forEach(({ square, bg, border, icon }) => {
+    nextAction.forEach(({ square, bg, border, icon }) => {
       square.style.backgroundColor = bg;
       square.style.borderColor = border;
-      square.innerHTML = '';
+      clearSquareContent(square);
       if (icon) {
         const img = document.createElement('img');
         img.src = icon;
@@ -770,18 +754,7 @@ function createGrid(size) {
     updateUndoRedoButtons();
   });
 
-  document.addEventListener('keydown', e => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
-      e.preventDefault();
-      undoBtn.click();
-    }
-    if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) {
-      e.preventDefault();
-      redoBtn.click();
-    }
-  });
-
-  document.getElementById('exportBtn').addEventListener('click', () => {
+  exportBtn.addEventListener('click', () => {
     const gridInner = document.getElementById('gridInner');
     const clone = gridInner.cloneNode(true);
 
@@ -805,14 +778,9 @@ function createGrid(size) {
     });
   });
 
-  document.getElementById('randomizeBtn').addEventListener('click', () => {
+  randomizeBtn.addEventListener('click', () => {
     const squares = document.querySelectorAll('.square');
-    const snapshot = Array.from(squares).map(square => ({
-      square,
-      bg: square.style.backgroundColor,
-      border: square.style.borderColor,
-      icon: square.querySelector('img')?.src || ''
-    }));
+    const snapshot = Array.from(squares).map(square => (snapshotSquare(square)));
     undoStack.push(snapshot);
     redoStack.length = 0;
 
@@ -836,11 +804,21 @@ function createGrid(size) {
       }
     });
     clearBtn.disabled = false;
-    if (window.innerWidth < 800) setMobileControls(false);
     updateUndoRedoButtons();
   });
 
- function setMobileControls(isOpen) {
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+      e.preventDefault();
+      undoBtn.click();
+    }
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) {
+      e.preventDefault();
+      redoBtn.click();
+    }
+  });
+
+  function setMobileControls(isOpen) {
     controls.style.display = isOpen ? 'block' : 'none';
     closeBtn.style.display = isOpen ? 'flex' : 'none';
     header.style.display = isOpen ? 'none' : 'flex';
