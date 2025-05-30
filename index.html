@@ -553,7 +553,6 @@
 
     let isPainting = false;
     let currentBulk = [];
-    let lastTouchedSquare = null;
 
     function endBulkPaint() {
       if (isPainting && currentBulk.length) {
@@ -565,16 +564,7 @@
     }
 
     gridInner.addEventListener('mouseup', endBulkPaint);
-    gridInner.addEventListener('touchend', () => {
-      if (lastTouchedSquare) {
-        undoStack.push([snapshotSquare(lastTouchedSquare)]);
-        redoStack.length = 0;
-        updateUndoRedoButtons();
-        lastTouchedSquare = null;
-      }
-      endBulkPaint();
-    }, { passive: true });
-
+    gridInner.addEventListener('touchend', endBulkPaint, { passive: true });
     for (let i = 0; i < cols * rows; i++) {
       const square = document.createElement('div');
       square.className = 'square';
@@ -595,24 +585,27 @@
       square.addEventListener('touchstart', (e) => {
         isPainting = true;
         currentBulk = [];
-        const target = document.elementFromPoint(
-          e.touches[0].clientX,
-          e.touches[0].clientY
-        );
+        const target = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
         if (target?.classList.contains('square')) {
-          lastTouchedSquare = target; // Record for later commit
-          currentBulk.push(snapshotSquare(target));
+          currentBulk.push({
+            square: target,
+            bg: target.style.backgroundColor,
+            border: target.style.borderColor,
+            icon: target.querySelector('img')?.src || ''
+          });
           customizeSquare(target, false);
         }
       }, { passive: true });
       square.addEventListener('touchmove', (e) => {
-        const target = document.elementFromPoint(
-          e.touches[0].clientX,
-          e.touches[0].clientY
-        );
+        const target = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
         if (target?.classList.contains('square')) {
           if (!currentBulk.find(s => s.square === target)) {
-            currentBulk.push(snapshotSquare(target));
+            currentBulk.push({
+              square: target,
+              bg: target.style.backgroundColor,
+              border: target.style.borderColor,
+              icon: target.querySelector('img')?.src || ''
+            });
           }
           customizeSquare(target, false);
         }
