@@ -80,9 +80,6 @@
     padding: 0;
     user-select: none;
   }
-  svg, svg * {
-    pointer-events: none;
-  }
   .square {
     width: 100px;
     height: 100px;
@@ -242,6 +239,9 @@
   }
   button:hover {
     background: #f9f9f9;
+  }
+  button svg {
+    pointer-events: none;
   }
   button.palette {
     display: none;
