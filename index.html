@@ -594,12 +594,6 @@
             icon: target.querySelector('img')?.src || ''
           });
           customizeSquare(target, false);
-
-          // Commit immediately for iOS tap tracking
-          undoStack.push([...currentBulk]);
-          redoStack.length = 0;
-          updateUndoRedoButtons();
-          isPainting = false; // prevent touchend from interfering
         }
       }, { passive: true });
       square.addEventListener('touchmove', (e) => {
