@@ -595,6 +595,14 @@
           });
           customizeSquare(target, false);
         }
+        // Commit immediately for iOS tap tracking
+        setTimeout(() => {
+          if (currentBulk.length === 1) {
+            undoStack.push([...currentBulk]);
+            redoStack.length = 0;
+            updateUndoRedoButtons();
+          }
+        }, 0);
       }, { passive: true });
       square.addEventListener('touchmove', (e) => {
         const target = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
