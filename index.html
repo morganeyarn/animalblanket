@@ -697,7 +697,7 @@
     });
     borderColorInput.classList.toggle('selected', !matched);
   });
-  
+
   function init() {
     createPalette(bgPalette, presetBGColors, 'bg');
     createPalette(borderPalette, presetBorderColors, 'border');
@@ -705,6 +705,7 @@
     createGrid(layoutSelect.value);
     updateUndoRedoButtons(); 
     updateLayoutLabels();
+    hideIOS();
   }
 
   applyAllBtn.addEventListener('click', () => {
@@ -783,7 +784,7 @@
 
     document.body.appendChild(wrapper);
 
-    html2canvas(wrapper).then(canvas => {
+      html2canvas(wrapper).then(canvas => {
       document.body.removeChild(wrapper);
       const link = document.createElement('a');
       link.download = 'crochet_layout.png';
@@ -866,6 +867,12 @@
       updateLayoutLabels();
     }
   });
+
+  function hideIOS() {
+    if (/iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream) {
+      exportBtn.style.display = 'none';
+    }
+  };
 
   init();
 })();
