@@ -452,6 +452,18 @@
   const presetBorderColors = ['#495f4a', '#e1c8a7', '#cd896d', '#506584'];
   const iconPaths = Array.from({ length: 19 }, (_, i) => `icons/icon${i + 1}.svg`);
 
+  const iconSvgs = [
+      '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="29.055" cy="25.224" rx="13.091" ry="10.536" transform="matrix(1, 0, 0, 1, 7.105427357601002e-15, 0)"/></svg>',
+      '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="29.055" cy="25.224" rx="13.091" ry="10.536" transform="matrix(1, 0, 0, 1, 7.105427357601002e-15, 0)"/></svg>',
+      '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="29.055" cy="25.224" rx="13.091" ry="10.536" transform="matrix(1, 0, 0, 1, 7.105427357601002e-15, 0)"/></svg>',
+      '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="29.055" cy="25.224" rx="13.091" ry="10.536" transform="matrix(1, 0, 0, 1, 7.105427357601002e-15, 0)"/></svg>',
+      '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="29.055" cy="25.224" rx="13.091" ry="10.536" transform="matrix(1, 0, 0, 1, 7.105427357601002e-15, 0)"/></svg>',
+      '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="29.055" cy="25.224" rx="13.091" ry="10.536" transform="matrix(1, 0, 0, 1, 7.105427357601002e-15, 0)"/></svg>',
+      '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="29.055" cy="25.224" rx="13.091" ry="10.536" transform="matrix(1, 0, 0, 1, 7.105427357601002e-15, 0)"/></svg>',
+      '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="29.055" cy="25.224" rx="13.091" ry="10.536" transform="matrix(1, 0, 0, 1, 7.105427357601002e-15, 0)"/></svg>',
+      '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><ellipse style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" cx="29.055" cy="25.224" rx="13.091" ry="10.536" transform="matrix(1, 0, 0, 1, 7.105427357601002e-15, 0)"/></svg>',
+    ];
+
   const currentSelection = {
     bg: '#ffffff',
     border: 'transparent',
@@ -516,6 +528,7 @@
 
   function createIconGrid() {
     iconGrid.innerHTML = '';
+    // “None” button
     const noneBtn = document.createElement('div');
     noneBtn.className = 'icon-button selected';
     noneBtn.textContent = 'None';
@@ -525,14 +538,14 @@
     });
     iconGrid.appendChild(noneBtn);
 
-    iconPaths.forEach(path => {
+    // now loop over our SVG strings instead of paths
+    iconSvgs.forEach((svgString, idx) => {
       const btn = document.createElement('div');
       btn.className = 'icon-button';
-      const img = document.createElement('img');
-      img.src = path;
-      btn.appendChild(img);
+      // inject the raw SVG markup directly
+      btn.innerHTML = svgString;
       btn.addEventListener('click', () => {
-        currentSelection.icon = path;
+        currentSelection.icon = svgString;
         updateIconSelection(btn);
       });
       iconGrid.appendChild(btn);
@@ -629,12 +642,11 @@
       square.style.borderColor = currentSelection.border;
     }
     if (editMode === 'all' || editMode === 'pattern') {
-      while (square.firstChild) square.removeChild(square.firstChild);
+      // wipe out any previous icon
+      square.innerHTML = '';
       if (currentSelection.icon) {
-        const img = document.createElement('img');
-        img.src = currentSelection.icon;
-        img.alt = '';
-        square.appendChild(img);
+        // directly insert the SVG markup
+        square.innerHTML = currentSelection.icon;
       }
     }
   }
@@ -877,5 +889,6 @@
   init();
 })();
 </script>
+
 </body>
 </html>
