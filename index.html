@@ -672,12 +672,6 @@
     gridInner.dispatchEvent(event);
   });
 
-  function clearSquareContent(square) {
-    while (square.firstChild) {
-      square.removeChild(square.firstChild);
-    }
-  }
-
   function updateUndoRedoButtons() {
     undoBtn.disabled = undoStack.length === 0;
     redoBtn.disabled = redoStack.length === 0;
@@ -745,7 +739,7 @@
     squares.forEach(square => {
       square.style.backgroundColor = '#eee';
       square.style.borderColor = 'transparent';
-      clearSquareContent(square);
+      square.innerHTML = '';
     });
     clearBtn.disabled = true;
     updateUndoRedoButtons();
