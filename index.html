@@ -81,8 +81,9 @@
     user-select: none;
   }
   .square {
-    width: 100px;
-    height: 100px;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
     background-color: #eeeeee;
     border: 8px solid transparent;
     box-sizing: border-box;
@@ -96,7 +97,7 @@
   }
   .square svg {
     width:90%;
-    height:90%;
+    height:auto;
     aspect-ratio: 1 / 1;
     pointer-events: none;
   }
@@ -583,7 +584,8 @@
     const [cols, rows] = size.split('x').map(Number);
     const gridInner = document.getElementById('gridInner');
     gridInner.style.display = 'grid';
-    gridInner.style.gridTemplateColumns = `repeat(${cols}, minmax(60px, 100px))`;
+     gridInner.style.gridTemplateColumns = `repeat(${cols}, minmax(76px, 116px))`;
+
     gridInner.innerHTML = '';
 
     let isPainting = false;
