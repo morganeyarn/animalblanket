@@ -1,6 +1,6 @@
 Ideas backlog
 - dark theme / system theme
 - calculation of final dimensions
-- yarn list and amount calculation
+- yarn list and amount calculation - done
 - layout and configuration presets
-- maintain squares position on layout update
+- maintain squares position on layout update - done
