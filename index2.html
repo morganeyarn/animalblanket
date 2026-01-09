@@ -2057,10 +2057,18 @@
         const canvas = await html2canvas(wrapper, { scale: 2 });
         document.body.removeChild(wrapper);
         
-        const link = document.createElement('a');
-        link.download = 'crochet_layout.png';
-        link.href = canvas.toDataURL();
-        link.click();
+        const dataUrl = canvas.toDataURL("image/png");
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        if (isIOS) {
+          window.location.href = dataUrl;
+        } else {
+          const link = document.createElement('a');
+          link.href = dataUrl;
+          link.download = 'crochet_layout.png';
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+        }
       } catch (error) {
         console.error('Export failed:', error);
         alert('Export failed. Please try again.');
