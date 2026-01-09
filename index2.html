@@ -198,6 +198,7 @@
   select, button {
     font-family: inherit;
     font-size: 1rem;
+    font-weight: 500;
     padding: 0.5em;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -285,6 +286,7 @@
     border: none;
     background: none;
     font-size: 0.95rem;
+    font-weight: 400;
     color: #333;
     cursor: pointer;
     text-decoration: none;
@@ -370,7 +372,7 @@
     overflow-y: auto;
   }
   .yarn-section {
-    margin-bottom: 1.25rem;
+    margin-bottom: 2rem;
   }
   .yarn-section:last-child {
     margin-bottom: 0;
@@ -571,6 +573,15 @@
     <div class="dropdown">
       <button id="menuBtn" aria-label="More options" title="More options"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-160q-33 0-56.5-23.5T400-240q0-33 23.5-56.5T480-320q33 0 56.5 23.5T560-240q0 33-23.5 56.5T480-160Zm0-240q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm0-240q-33 0-56.5-23.5T400-720q0-33 23.5-56.5T480-800q33 0 56.5 23.5T560-720q0 33-23.5 56.5T480-640Z"/></svg></button>
       <div id="dropdownMenu" class="dropdown-menu">
+        <button id="yarnQuantitiesBtn" class="dropdown-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M208-120q-37 0-62.5-25.5T120-208v-548q0-29 27-40.5t47 8.5l90 90-54 54 28 28 54-54 104 104-54 54 28 28 54-54 104 104-54 54 28 28 54-54 104 104-54 54 28 28 54-54 80 80q20 20 8.5 47T756-120H208Zm32-120h332L240-572v332Z"/></svg>
+          Get yarn quantities
+        </button>
+        <button id="shareLinkBtn" class="dropdown-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M680-80q-50 0-85-35t-35-85q0-6 3-28L282-392q-16 15-37 23.5t-45 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q24 0 45 8.5t37 23.5l281-164q-2-7-2.5-13.5T560-760q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-24 0-45-8.5T598-672L317-508q2 7 2.5 13.5t.5 14.5q0 8-.5 14.5T317-452l281 164q16-15 37-23.5t45-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Z"/></svg>
+          Share your design
+        </button>
+        <div class="dropdown-divider"></div>
         <button id="saveJsonBtn" class="dropdown-item">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>
           Save configuration
@@ -578,10 +589,6 @@
         <button id="loadJsonBtn" class="dropdown-item">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M440-200h80v-167l64 64 56-57-160-160-160 160 57 56 63-63v167ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/></svg>
           Load configuration
-        </button>
-        <button id="yarnQuantitiesBtn" class="dropdown-item">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M208-120q-37 0-62.5-25.5T120-208v-548q0-29 27-40.5t47 8.5l90 90-54 54 28 28 54-54 104 104-54 54 28 28 54-54 104 104-54 54 28 28 54-54 104 104-54 54 28 28 54-54 80 80q20 20 8.5 47T756-120H208Zm32-120h332L240-572v332Z"/></svg>
-          Get yarn quantities
         </button>
         <div class="dropdown-divider"></div>
         <a href="https://morganeyarn.com/contact" target="_blank" class="dropdown-item">
@@ -599,7 +606,7 @@
 <div id="yarnModal" class="modal-overlay">
   <div class="modal">
     <div class="modal-header">
-      <h2>How much yarn do I need?</h2>
+      <h2>Yarn quantities</h2>
       <button id="yarnModalClose" class="modal-close" aria-label="Close">
         <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
       </button>
@@ -610,6 +617,29 @@
     <div class="modal-footer">
       <span class="yarn-total" id="yarnTotal">Total: 0m</span>
     </div>
+  </div>
+</div>
+
+<!-- Share Link Modal -->
+<div id="shareModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+    <h2>Share your design</h2>
+      <button id="shareModalClose" class="modal-close" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="yarn-disclaimer">
+        🧶 Use this link to share your design with others. Anyone opening it will see the same layout, colors, and animals you’ve chosen.
+      </div>
+      <div style="display: flex; margin-bottom: 0.5rem;">
+        <input type="text" id="shareUrlInput" readonly style="flex: 1; padding: 0.75rem; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem;">
+      </div>
+      <div class="button-group-space-between ">
+        <button id="copyShareUrlBtn" class="flex-grow">Copy URL <span id="shareCopyStatus" class="muted" style="color: #495f4a; display: none;">✓ Copied to clipboard!</span></button>
+      </div>
+      </div>
   </div>
 </div>
 
@@ -942,7 +972,13 @@
     clearBtn: document.getElementById('clearBtn'),
     applyAllBtn: document.getElementById('applyAllBtn'),
     randomizeBtn: document.getElementById('randomizeBtn'),
-    exportBtn: document.getElementById('exportBtn')
+    exportBtn: document.getElementById('exportBtn'),
+    shareLinkBtn: document.getElementById('shareLinkBtn'),
+    shareModal: document.getElementById('shareModal'),
+    shareUrlInput: document.getElementById('shareUrlInput'),
+    copyShareUrlBtn: document.getElementById('copyShareUrlBtn'),
+    shareCopyStatus: document.getElementById('shareCopyStatus'),
+    shareModalClose: document.getElementById('shareModalClose')
   };
 
   // ============================================================
@@ -1500,6 +1536,267 @@
   };
 
   // ============================================================
+  // URL SHARE MODULE
+  // ============================================================
+  const URLShare = {
+    // Version prefix for URL format
+    VERSION: 'd1',
+    
+    // Character set for encoding (0-9, a-z)
+    CHARS: '0123456789abcdefghijklmnopqrstuvwxyz',
+    
+    // Get animal ID list in order (for index mapping)
+    getAnimalIds() {
+      return Config.ICON_SVGS.map(icon => icon.id);
+    },
+    
+    // Encode a value to a single character
+    encodeChar(index) {
+      return this.CHARS[index] || '0';
+    },
+    
+    // Decode a character to an index
+    decodeChar(char) {
+      const index = this.CHARS.indexOf(char.toLowerCase());
+      return index >= 0 ? index : 0;
+    },
+    
+    // Find color index (preset or custom)
+    getColorIndex(color, presets, customColors) {
+      const normalized = YarnCalculator.normalizeColor(color);
+      
+      // Check presets first
+      for (let i = 0; i < presets.length; i++) {
+        if (presets[i].toLowerCase() === normalized) {
+          return { index: i, isCustom: false };
+        }
+      }
+      
+      // Check custom colors
+      const customIndex = customColors.indexOf(normalized);
+      if (customIndex >= 0) {
+        return { index: presets.length + customIndex, isCustom: true };
+      }
+      
+      // Add as new custom color
+      customColors.push(normalized);
+      return { index: presets.length + customColors.length - 1, isCustom: true };
+    },
+    
+    // Get animal index (0 = none, 1+ = animal)
+    getAnimalIndex(iconId) {
+      if (!iconId) return 0;
+      const animals = this.getAnimalIds();
+      const index = animals.indexOf(iconId);
+      return index >= 0 ? index + 1 : 0;
+    },
+    
+    // Get animal ID from index
+    getAnimalId(index) {
+      if (index === 0) return null;
+      const animals = this.getAnimalIds();
+      return animals[index - 1] || null;
+    },
+    
+    // Encode current grid state to URL hash
+    encode() {
+      const squares = DOM.gridInner.querySelectorAll('.square');
+      const { cols, rows } = State.grid;
+      
+      const customBgColors = [];
+      const customBorderColors = [];
+      
+      // First pass: collect custom colors
+      const squareData = Array.from(squares).map(square => {
+        const bg = square.style.backgroundColor || Config.DEFAULT_SQUARE_BG;
+        const border = square.style.borderColor || Config.DEFAULT_SQUARE_BORDER;
+        const iconId = square.dataset.iconId || null;
+        
+        const bgInfo = this.getColorIndex(bg, Config.PRESET_BG_COLORS, customBgColors);
+        const borderInfo = this.getColorIndex(border, Config.PRESET_BORDER_COLORS, customBorderColors);
+        const animalIndex = this.getAnimalIndex(iconId);
+        
+        return {
+          bg: bgInfo.index,
+          border: borderInfo.index,
+          animal: animalIndex
+        };
+      });
+      
+      // Build encoded string
+      let encoded = this.VERSION;
+      encoded += this.encodeChar(cols);
+      encoded += this.encodeChar(rows);
+      
+      // Encode each square (3 chars: bg, border, animal)
+      squareData.forEach(sq => {
+        encoded += this.encodeChar(sq.bg);
+        encoded += this.encodeChar(sq.border);
+        encoded += this.encodeChar(sq.animal);
+      });
+      
+      // Append custom colors if any
+      if (customBgColors.length > 0 || customBorderColors.length > 0) {
+        encoded += '-';
+        encoded += customBgColors.length.toString();
+        encoded += customBorderColors.length.toString();
+        customBgColors.forEach(c => encoded += c.replace('#', ''));
+        customBorderColors.forEach(c => encoded += c.replace('#', ''));
+      }
+      
+      return encoded;
+    },
+    
+    // Decode URL hash to grid state
+    decode(hash) {
+      try {
+        // Remove # if present
+        hash = hash.replace(/^#/, '');
+        
+        // Check version
+        if (!hash.startsWith(this.VERSION)) {
+          console.warn('Unknown URL format version');
+          return null;
+        }
+        
+        // Parse layout
+        const cols = this.decodeChar(hash[2]);
+        const rows = this.decodeChar(hash[3]);
+        
+        if (cols < 1 || cols > 9 || rows < 1 || rows > 9) {
+          console.warn('Invalid grid dimensions');
+          return null;
+        }
+        
+        // Check for custom colors section
+        let customBgColors = [];
+        let customBorderColors = [];
+        let squareDataStr = hash.substring(4);
+        
+        const dashIndex = squareDataStr.indexOf('-');
+        if (dashIndex > 0) {
+          const colorSection = squareDataStr.substring(dashIndex + 1);
+          squareDataStr = squareDataStr.substring(0, dashIndex);
+          
+          // Parse custom color counts
+          const numCustomBg = parseInt(colorSection[0]) || 0;
+          const numCustomBorder = parseInt(colorSection[1]) || 0;
+          
+          // Extract custom colors (6 chars each)
+          let colorPos = 2;
+          for (let i = 0; i < numCustomBg; i++) {
+            customBgColors.push('#' + colorSection.substring(colorPos, colorPos + 6));
+            colorPos += 6;
+          }
+          for (let i = 0; i < numCustomBorder; i++) {
+            customBorderColors.push('#' + colorSection.substring(colorPos, colorPos + 6));
+            colorPos += 6;
+          }
+        }
+        
+        // Parse square data
+        const expectedSquares = cols * rows;
+        const squares = [];
+        
+        for (let i = 0; i < expectedSquares; i++) {
+          const pos = i * 3;
+          if (pos + 2 >= squareDataStr.length) break;
+          
+          const bgIndex = this.decodeChar(squareDataStr[pos]);
+          const borderIndex = this.decodeChar(squareDataStr[pos + 1]);
+          const animalIndex = this.decodeChar(squareDataStr[pos + 2]);
+          
+          // Resolve colors
+          let bgColor, borderColor;
+          
+          if (bgIndex < Config.PRESET_BG_COLORS.length) {
+            bgColor = Config.PRESET_BG_COLORS[bgIndex];
+          } else {
+            const customIdx = bgIndex - Config.PRESET_BG_COLORS.length;
+            bgColor = customBgColors[customIdx] || Config.PRESET_BG_COLORS[0];
+          }
+          
+          if (borderIndex < Config.PRESET_BORDER_COLORS.length) {
+            borderColor = Config.PRESET_BORDER_COLORS[borderIndex];
+          } else {
+            const customIdx = borderIndex - Config.PRESET_BORDER_COLORS.length;
+            borderColor = customBorderColors[customIdx] || Config.PRESET_BORDER_COLORS[0];
+          }
+          
+          squares.push({
+            row: Math.floor(i / cols),
+            col: i % cols,
+            bgColor,
+            borderColor,
+            iconId: this.getAnimalId(animalIndex)
+          });
+        }
+        
+        return {
+          version: 1,
+          layout: { cols, rows },
+          squares
+        };
+      } catch (e) {
+        console.error('Failed to decode URL:', e);
+        return null;
+      }
+    },
+    
+    // Apply decoded data to grid
+    applyFromHash() {
+      const hash = window.location.hash;
+      if (!hash || hash.length < 5) return false;
+      
+      const data = this.decode(hash);
+      if (!data) return false;
+      
+      try {
+        DataIO.applyImportData(data);
+        // Clear undo history for shared designs
+        State.undoStack = [];
+        State.redoStack = [];
+        UI.updateUndoRedoButtons();
+        return true;
+      } catch (e) {
+        console.error('Failed to apply shared design:', e);
+        return false;
+      }
+    },
+    
+    // Generate shareable URL and show in modal
+    share() {
+      const encoded = this.encode();
+      const url = window.location.origin + window.location.pathname + '#' + encoded;
+            
+      // Show modal with URL
+      DOM.shareUrlInput.value = url;
+      DOM.shareCopyStatus.style.display = 'none';
+      DOM.shareModal.classList.add('open');
+    },
+    
+    // Copy URL to clipboard
+    async copyToClipboard() {
+      const url = DOM.shareUrlInput.value;
+      
+      try {
+        await navigator.clipboard.writeText(url);
+        DOM.shareCopyStatus.style.display = 'contents';
+      } catch (e) {
+        // Fallback for older browsers
+        DOM.shareUrlInput.select();
+        document.execCommand('copy');
+        DOM.shareCopyStatus.style.display = 'contents';
+      }
+    },
+    
+    // Close share modal
+    closeModal() {
+      DOM.shareModal.classList.remove('open');
+    }
+  };
+
+  // ============================================================
   // YARN CALCULATOR MODULE
   // ============================================================
   const YarnCalculator = {
@@ -1853,6 +2150,27 @@
         YarnCalculator.openModal();
       });
       
+      // Share link
+      DOM.shareLinkBtn.addEventListener('click', () => {
+        DOM.dropdownMenu.classList.remove('open');
+        URLShare.share();
+      });
+      
+      // Share modal controls
+      DOM.copyShareUrlBtn.addEventListener('click', () => {
+        URLShare.copyToClipboard();
+      });
+      
+      DOM.shareModalClose.addEventListener('click', () => {
+        URLShare.closeModal();
+      });
+      
+      DOM.shareModal.addEventListener('click', (e) => {
+        if (e.target === DOM.shareModal) {
+          URLShare.closeModal();
+        }
+      });
+      
       DOM.yarnModalClose.addEventListener('click', () => {
         YarnCalculator.closeModal();
       });
@@ -1986,9 +2304,22 @@
     UI.createPalette(DOM.borderPalette, Config.PRESET_BORDER_COLORS, 'border');
     UI.createIconGrid();
     
-    // Create initial grid (no content to preserve on first load)
-    const { cols, rows } = Utils.parseLayout(DOM.layoutSelect.value);
-    Grid.createGrid(cols, rows, false);
+    // Check for shared design in URL hash
+    const hasSharedDesign = window.location.hash && window.location.hash.length > 4;
+    
+    if (hasSharedDesign) {
+      // Try to load shared design
+      const loaded = URLShare.applyFromHash();
+      if (!loaded) {
+        // Fallback to default grid if URL is invalid
+        const { cols, rows } = Utils.parseLayout(DOM.layoutSelect.value);
+        Grid.createGrid(cols, rows, false);
+      }
+    } else {
+      // Create initial grid (no content to preserve on first load)
+      const { cols, rows } = Utils.parseLayout(DOM.layoutSelect.value);
+      Grid.createGrid(cols, rows, false);
+    }
     
     // Setup event handlers
     Events.init();
