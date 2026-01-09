@@ -10,4 +10,3 @@ Ideas backlog
 - layout and configuration presets + theme presets (“Soft Pastels”, “Woodland”, "cow blanket")
 - Auto-save to browser (localStorage) + “Restore last session”
 - Shareable link (encode design into URL)
-- Centralize “apply layout to UI”
