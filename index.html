@@ -694,7 +694,7 @@
   // CONFIGURATION
   // ============================================================
   const Config = {
-    UNDO_STACK_LIMIT: 50,
+    UNDO_STACK_LIMIT: 200,
     RESIZE_DEBOUNCE_MS: 150,
     DEFAULT_SQUARE_BG: '#eeeeee',
     DEFAULT_SQUARE_BORDER: 'transparent',
@@ -1251,16 +1251,25 @@
       // Handle layout change
       if (nextAction.type === 'layout') {
         const currentSnapshot = Grid.snapshotGridWithCoords();
-        State.pushUndo({
+        // Direct push to avoid clearing redo stack
+        State.undoStack.push({
           type: 'layout',
           before: currentSnapshot,
           after: nextAction.before
         });
+        // Enforce stack limit
+        if (State.undoStack.length > Config.UNDO_STACK_LIMIT) {
+          State.undoStack.shift();
+        }
         Grid.restoreFromLayoutSnapshot(nextAction.before);
       } else {
         // Handle square changes
         const undoSnapshot = nextAction.map(({ square }) => Grid.snapshotSquare(square));
         State.undoStack.push(undoSnapshot); // Direct push to avoid clearing redo
+        // Enforce stack limit
+        if (State.undoStack.length > Config.UNDO_STACK_LIMIT) {
+          State.undoStack.shift();
+        }
         nextAction.forEach(Grid.restoreSquare);
       }
       
