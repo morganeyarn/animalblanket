@@ -988,8 +988,12 @@
     // Snapshot a single square's state (includes iconId for export)
     snapshotSquare(square) {
       const iconNode = square.querySelector('svg');
+      const index = parseInt(square.dataset.index);
+      const { row, col } = Utils.indexToCoords(index, State.grid.cols);
       return {
         square,
+        row,
+        col,
         bg: square.style.backgroundColor || Config.DEFAULT_SQUARE_BG,
         border: square.style.borderColor || Config.DEFAULT_SQUARE_BORDER,
         iconId: square.dataset.iconId || null,
@@ -1050,11 +1054,22 @@
 
     // Restore a square from snapshot
     restoreSquare(snapshot) {
-      const { square, bg, border, iconId, iconSvg } = snapshot;
-      square.style.backgroundColor = bg;
-      square.style.borderColor = border;
-      square.innerHTML = iconSvg || '';
-      square.dataset.iconId = iconId || '';
+      const { square, row, col, bg, border, iconId, iconSvg } = snapshot;
+      
+      // Find the target square - use original reference if still in DOM,
+      // otherwise look up by coordinates
+      let targetSquare = square;
+      if (!square.isConnected) {
+        // Original square was removed (layout changed), find by coordinates
+        const index = Utils.coordsToIndex(row, col, State.grid.cols);
+        targetSquare = DOM.gridInner.querySelector(`[data-index="${index}"]`);
+        if (!targetSquare) return; // Square doesn't exist in current layout (grid shrank)
+      }
+      
+      targetSquare.style.backgroundColor = bg;
+      targetSquare.style.borderColor = border;
+      targetSquare.innerHTML = iconSvg || '';
+      targetSquare.dataset.iconId = iconId || '';
     },
 
     // Create grid with position-preserving resize
@@ -1220,6 +1235,12 @@
   // HISTORY MODULE
   // ============================================================
   const History = {
+    // Helper to get current square element by coordinates
+    getCurrentSquare(row, col) {
+      const index = Utils.coordsToIndex(row, col, State.grid.cols);
+      return DOM.gridInner.querySelector(`[data-index="${index}"]`);
+    },
+
     undo() {
       const lastAction = State.popUndo();
       if (!lastAction) return;
@@ -1236,8 +1257,17 @@
       } else {
         // Handle square changes
         const actions = Array.isArray(lastAction) ? lastAction : [lastAction];
-        const redoSnapshot = actions.map(({ square }) => Grid.snapshotSquare(square));
-        State.pushRedo(redoSnapshot);
+        
+        // Create redo snapshot using CURRENT squares at those coordinates
+        const redoSnapshot = actions.map(action => {
+          const currentSquare = History.getCurrentSquare(action.row, action.col);
+          if (!currentSquare) return null;
+          return Grid.snapshotSquare(currentSquare);
+        }).filter(Boolean);
+        
+        if (redoSnapshot.length > 0) {
+          State.pushRedo(redoSnapshot);
+        }
         actions.forEach(Grid.restoreSquare);
       }
       
@@ -1263,12 +1293,19 @@
         }
         Grid.restoreFromLayoutSnapshot(nextAction.before);
       } else {
-        // Handle square changes
-        const undoSnapshot = nextAction.map(({ square }) => Grid.snapshotSquare(square));
-        State.undoStack.push(undoSnapshot); // Direct push to avoid clearing redo
-        // Enforce stack limit
-        if (State.undoStack.length > Config.UNDO_STACK_LIMIT) {
-          State.undoStack.shift();
+        // Handle square changes - snapshot CURRENT squares at those coordinates
+        const undoSnapshot = nextAction.map(action => {
+          const currentSquare = History.getCurrentSquare(action.row, action.col);
+          if (!currentSquare) return null;
+          return Grid.snapshotSquare(currentSquare);
+        }).filter(Boolean);
+        
+        if (undoSnapshot.length > 0) {
+          State.undoStack.push(undoSnapshot); // Direct push to avoid clearing redo
+          // Enforce stack limit
+          if (State.undoStack.length > Config.UNDO_STACK_LIMIT) {
+            State.undoStack.shift();
+          }
         }
         nextAction.forEach(Grid.restoreSquare);
       }
