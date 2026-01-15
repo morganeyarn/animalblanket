@@ -421,9 +421,6 @@
     justify-content: space-between;
     align-items: center;
   }
-  .yarn-total {
-    font-weight: 600;
-  }
   .yarn-empty {
     text-align: center;
     color: #888;
@@ -615,7 +612,10 @@
       <!-- Content populated by JS -->
     </div>
     <div class="modal-footer">
-      <span class="yarn-total" id="yarnTotal">Total: 0m</span>
+      <div class="button-group-space-between" style="width: 100%;">
+        <button id="yarnCopyBtn" class="flex-grow">Copy to clipboard</button>
+        <button id="yarnShareBtn" class="flex-grow">Share</button>
+      </div>
     </div>
   </div>
 </div>
@@ -637,7 +637,7 @@
         <input type="text" id="shareUrlInput" readonly style="flex: 1; padding: 0.75rem; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem;">
       </div>
       <div class="button-group-space-between ">
-        <button id="copyShareUrlBtn" class="flex-grow">Copy URL <span id="shareCopyStatus" class="muted" style="color: #495f4a; display: none;">✓ Copied to clipboard!</span></button>
+        <button id="copyShareUrlBtn" class="flex-grow">Copy to clipboard</button>
       </div>
       </div>
   </div>
@@ -694,7 +694,7 @@
   // CONFIGURATION
   // ============================================================
   const Config = {
-    UNDO_STACK_LIMIT: 200,
+    UNDO_STACK_LIMIT: 50,
     RESIZE_DEBOUNCE_MS: 150,
     DEFAULT_SQUARE_BG: '#eeeeee',
     DEFAULT_SQUARE_BORDER: 'transparent',
@@ -724,7 +724,9 @@
       { id: 'Bear', svg: '<svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 1164 1164"><path fill="#774623" d="M645 263c47 11 75 15 120 33 31 13 41 30 55 28 16-2 23-24 39-29 47-17 62-15 100-9 15 2 36 21 47 32 3 3 35 58 35 62 6 56 6 72-10 115-8 21-34 38-49 54l-10 9c-2 2-7 1-8 4-2 5-1 10-1 15-1 38 5 77-2 114-6 36-14 73-35 102-104 138-155 179-338 196-98 9-170-31-233-79-67-52-97-96-125-214-11-43 0-88 1-132l5-20-3-2c-22-11-38-17-52-44-15-32-17-32-17-84 0-12-10-39 12-70 39-55 73-56 116-65 26-6 52 13 75 25 9 4 13 15 19 23 2 2 2 6 4 6 5-1 10-5 15-8 16-10 30-22 47-29 42-15 85-29 129-37 21-3 43 0 64 4Z"/><path fill="#EAD7BA" d="M729 654c10 11 31 32 41 63 17 56 14 73-4 113-13 27-18 34-43 58-5 5-16 15-39 22-43 13-91 28-134 16-45-13-81-32-118-79-17-21-19-50-21-76-1-19 7-36 12-54 12-48 48-89 93-102 78-22 166-12 213 39Z"/><path fill="#2C2016" d="M596 629c22 1 42 5 63 10l28 17c17 14 18 41-4 58-15 12-18 16-35 26l-31 16c0 7 0 33-2 40-6 21-1 40-23 42-22 3-13-61-15-77 0-1-9-2-11-4-29-18-49-37-70-67-3-4-6-19-3-23 39-44 87-40 103-38Z"/><path fill="#1A1920" d="M390 579c8-17 40-10 41-9 0 1 19 9 23 16 10 23-1 39-20 49-9 4-34-1-41-6-9-8-4-48-3-50ZM782 574c12 11 19 34 8 49-6 6-14 9-22 12-32 12-59-54-21-66 9-3 26-3 35 5Z"/></svg>' },
       { id: 'Pig', svg: '<svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 1164 1164"><path fill="#ffc5b3" fill-rule="evenodd" d="M593 244c-66 7-109 19-161 44-18 9-212 91-221 301-7 170 83 331 250 387 262 88 552-104 546-369-4-149-59-257-201-321-63-29-150-49-213-42"/><path fill="#211f26" fill-rule="evenodd" d="M761 581c-22 7-36 35-27 53 13 28 45 36 67 16 33-30 2-83-40-69m-326 1c-35 10-42 52-13 72s62 3 65-33c2-27-24-47-52-39"/><path fill="#fc8369" fill-rule="evenodd" d="M336 246c-81 11-122 73-160 136-33 54-22 111-11 151 9 30 56 45 83 54l25 8c76 28 179-6 185-72 5-63 6-70 0-91-15-58-24-142-83-179-11-7-26-5-39-7m531 12c-8 4-17 6-25 11-11 9-20 20-27 32-49 73-67 125-42 234 7 29 36 52 64 63 34 13 100-15 134-30 11-4 75-29 77-48 8-79 13-73-29-160-9-19-54-89-152-102M599 639c-25 5-29-2-94 23-59 23-86 55-118 93-53 62 4 138 66 162 17 7 37 1 56 0 18-2 35-10 53-11 30-2 61-3 92-3 40-1 83 17 119 0 50-24 79-68 47-149-4-9-19-35-22-38-30-35-84-59-126-69-23-6-48-5-73-8m58 86c-4 15-12 30-13 45-3 39 11 51 21 43 18-15 14-56 11-85 0-6-3-3-19-3m-128 3c-3 25-16 53-7 77 4 11 30-1 32-12 6-45 8-71-25-65"/></svg>' },
       { id: 'Unicorn', svg: '<svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 1164 1164"><path fill="#fffaea" fill-rule="evenodd" d="M301 58c-38 11-70 97-60 164 7 50 17 77 44 122 11 19 11 45 12 26 1-15 125-73 136-68 3 2 0-23 2-26a583 583 0 0 0-70-172c-26-44-39-53-64-46m626 1c-15 2-32 19-43 34-30 42-75 127-78 134-10 22-18 46-25 78-2 7-1 7-15 1-56-25-516 143-530 147-10 3 27 329 34 341 93 175 321 260 500 174a366 366 0 0 0 119-571c-7-8-7-7 5-15 47-30 74-62 88-103 16-49 16-70 1-137 0-3-22-57-25-62-9-18-17-24-31-21"/><path fill="#ff9a75" fill-rule="evenodd" d="m436 275-88 32c-21 13-33 39-52 54-10 8-19 4-29 16-15 17-14 34-32 48-15 11-38 15-48 31-10 17-6 39-6 58 0 7 11 13 7 18-12 18-37 25-48 44-14 25 20 57 27 78 3 9 0 20 4 29 6 14 16 25 26 37 1 1 6-1 5 1-3 12-14 23-15 36-1 17 10 57 12 60 13 14 26 28 41 41 3 3 9 8 13 6 10-7 20-18 24-30 3-10-5-21-4-32 1-5 11-3 15-7 7-8 15-16 19-26 3-5 12-69 10-74-1-4 135-419 140-426 8-10-14 2-21 6"/><path fill="#48d7ad" fill-rule="evenodd" d="M461 257c-21 16-30 26-45 48-12 20-21 45-38 63-9 9-22 15-29 26-7 10-9 24-12 36-1 2 3 5 1 7-8 10-39 14-43 26-7 20 12 43 13 64 0 2 3 4 2 6l-8 11c-11 18-26 35-32 55-2 8 9 14 9 21 0 2-27 83-13 87 20 7 37-17 56-25 22-9 33 5 60-19 12-10 14-46 16-48 10-12 29-18 34-33 6-21-5-44-4-66 0-9 23-20 29-27 1-1-4-24-7-34-4-12-11-24-13-37-2-11 0-22 2-33 1-14 13-51 15-56 7-14 41-39 45-54 9-28-20-15-38-18"/><path fill="#ffc5b3" fill-rule="evenodd" d="M616 281c-3 6-66 6-72 0a299 299 0 0 0 2 62l4 255s5 43-1 44c-72 11-133 88-128 163 10 147 196 218 300 114a172 172 0 0 0-13-249c-12-9-49-24-65-27-9-1-8 1-6-20a82847 82847 0 0 0 29-219c12-97 13-105 11-112M518 807c-13 8-10 21 13 55 11 17 23 21 32 12 9-10 8-14-10-43-16-26-23-31-35-24m141 1c-5 3-7 6-19 28-12 21-12 29-1 37s22 1 36-28c15-29 5-50-16-37"/><path fill="#fde57c" fill-rule="evenodd" d="M606 27c-12 4-20 18-26 45l-6 24c-11 45-18 84-22 123-2 24-3 50-5 61-1 5 14 26 22 28 6 1 81 2 85 0 8-3 16-13 19-23l2-6c7-8 6-47-2-98a509 509 0 0 0-31-123c-8-26-21-37-36-31"/><path fill="#a796c5" fill-rule="evenodd" d="M492 259c-15 16-30 55-38 70-2 5-7 10-8 15-4 21-9 42-6 63 2 14 13 25 19 38 1 2 3 4 2 7 0 12-9 24-5 35 17 46 24 43 46 62 19 16 31 47 56 48 42 1 29-62 31-79 3-27 12-53 13-80 0-6-5-12-9-17-3-3-9-2-11-5-3-8 2-17-1-24-7-16-17-29-27-43-2-3 2-97 1-101"/><path fill="#191920" fill-rule="evenodd" d="M423 595c-30 7-35 56-7 70 33 17 58 2 58-33 0-29-22-45-51-37m331 2c-24 8-32 46-13 63 28 24 65 9 67-26 2-26-27-45-54-37"/></svg>' },
-      { id: 'Bat', svg: '<svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 1164 1164"><path fill="#1c1b23" d="m592 6-11 7c-9 7-86 49-176 65-63 11-108 3-141-16-23-13-23-13-28-13-4 0-18 6-22 10-7 5-8 15-3 28 12 28 17 125-41 188-60 64-109 93-127 97-27 5-26 21-6 48 60 83 61 74 133 115 12 7 95 19 95 20l-2 11a273 273 0 0 0 271 324c10 0 10 0 9 3-3 64-4 64 4 97 19 76 75 131 76 133 16 30 39 34 51 9 10-22 43-59 89-85 93-54 193-39 226-16 16 10 24 10 34-3 11-13 11-14 4-36-12-40-9-78 10-135 10-30 17-44 45-85 39-59 43-66 63-85 44-43-26-65-112-45-43 10-101 29-108 55-28 110-128 182-222 161-13-3-29-9-27-10l10-7a268 268 0 0 0 112-242l10-8c40-29 74-88 78-132 7-77-5-81-85-35-49 28-60 32-70 22-10-12-45-39-42-45 5-12 70-117 40-133-9-5-13-2-25-2-38 0-108 39-158 87-10 10-10 10-32 11-70 0-132 26-181 74l-11 9c-2-3-5-22-6-35-3-99 88-183 202-188 31-1 45-15 69-67l15-29c27-46 33-80 19-107-8-16-18-22-29-15"/><path fill="#e1041c" d="M501 460c-23 10-32 44-15 62 34 33 90-16 58-51-9-10-31-16-43-11m135 122c-21 3-36 31-28 49 11 26 55 30 71 7 11-17 4-41-15-50-12-6-19-8-28-6"/></svg>' }
+      { id: 'Bat', svg: '<svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 1164 1164"><path fill="#1c1b23" d="m592 6-11 7c-9 7-86 49-176 65-63 11-108 3-141-16-23-13-23-13-28-13-4 0-18 6-22 10-7 5-8 15-3 28 12 28 17 125-41 188-60 64-109 93-127 97-27 5-26 21-6 48 60 83 61 74 133 115 12 7 95 19 95 20l-2 11a273 273 0 0 0 271 324c10 0 10 0 9 3-3 64-4 64 4 97 19 76 75 131 76 133 16 30 39 34 51 9 10-22 43-59 89-85 93-54 193-39 226-16 16 10 24 10 34-3 11-13 11-14 4-36-12-40-9-78 10-135 10-30 17-44 45-85 39-59 43-66 63-85 44-43-26-65-112-45-43 10-101 29-108 55-28 110-128 182-222 161-13-3-29-9-27-10l10-7a268 268 0 0 0 112-242l10-8c40-29 74-88 78-132 7-77-5-81-85-35-49 28-60 32-70 22-10-12-45-39-42-45 5-12 70-117 40-133-9-5-13-2-25-2-38 0-108 39-158 87-10 10-10 10-32 11-70 0-132 26-181 74l-11 9c-2-3-5-22-6-35-3-99 88-183 202-188 31-1 45-15 69-67l15-29c27-46 33-80 19-107-8-16-18-22-29-15"/><path fill="#e1041c" d="M501 460c-23 10-32 44-15 62 34 33 90-16 58-51-9-10-31-16-43-11m135 122c-21 3-36 31-28 49 11 26 55 30 71 7 11-17 4-41-15-50-12-6-19-8-28-6"/></svg>' },
+      { id: 'Sloth', svg: '<svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 1164 1164"><path fill="#cfbba3" fill-rule="evenodd" d="M555 167c-241 18-423 245-405 453 12 135 41 166 136 257 139 134 330 149 508 72 198-86 234-243 227-403-8-200-230-396-466-379"/><path fill="#f5e2cb" fill-rule="evenodd" d="M555 305a298 298 0 0 0-253 196c-5 13-18 89 2 155 17 53 37 96 45 106a310 310 0 0 0 465 9c13-15 49-89 54-102 22-67 11-142 7-157a299 299 0 0 0-320-207"/><path fill-rule="evenodd" d="m382 491-14 2c-2 1-47 10-81 27-25 12-61 43-77 65a156 156 0 0 0-33 88c2 19-3 53 43 71 99 39 283-50 277-158-3-51-65-103-115-95m366 5c-30 4-60 33-64 63-1 10 6 39 7 43 16 73 106 158 183 171 50 9 97-18 104-60l3-9c21-39-2-103-49-139-4-2-10-8-14-12-12-13-29-24-39-26-2-1-35-21-57-25-6-2-61-8-74-6m-174 77c-38 6-53 19-42 35 5 8 30 31 39 36s11 16 7 44c-2 18 7 24 18 11 4-5 4-5 4-26l1-22c0-2 13-8 16-8 14 0 36-21 39-36 3-17 1-22-14-29-10-5-50-8-68-5" style="fill:#7a5849"/><path fill="#191920" fill-rule="evenodd" d="M392 535c-21 4-30 17-30 45 0 44 47 55 74 18 20-27-9-70-44-63m377 3c-19 8-30 29-23 47 17 47 71 48 79 2 2-9 2-9-2-27-5-18-33-29-54-22"/></svg>' }
+   
     ],
     // { id: 'Pig', svg: '<svg>...</svg>' },
     // { id: 'Bat', svg: '<svg>...</svg>' }
@@ -758,6 +760,7 @@
       "Pig": { "Pink": 7, "Dark Pink": 7, "Black": 0.5 },
       "Rabbit": { "Pink": 8, "White": 5, "Brown": 1, "Black": 0.5 },
       "Red_Panda": { "Orange": 7, "White": 7, "Brown": 5, "Black": 0.5 },
+      "Sloth": { "Cream": 4, "Brown": 4, "Dark Brown": 4, "Black": 0.5 },
       "Sheep": { "White": 14, "Grey": 9, "Black": 0.5 },
       "Tiger": { "Orange": 10, "Brown": 5, "White": 5, "Black": 0.5 },
       "Unicorn": { "White": 12, "Light Pink": 7, "Purple": 5, "Blue": 5, "Pink": 5, "Yellow": 5, "Black": 0.5 },
@@ -968,7 +971,8 @@
     yarnModal: document.getElementById('yarnModal'),
     yarnModalBody: document.getElementById('yarnModalBody'),
     yarnModalClose: document.getElementById('yarnModalClose'),
-    yarnTotal: document.getElementById('yarnTotal'),
+    yarnCopyBtn: document.getElementById('yarnCopyBtn'),
+    yarnShareBtn: document.getElementById('yarnShareBtn'),
     clearBtn: document.getElementById('clearBtn'),
     applyAllBtn: document.getElementById('applyAllBtn'),
     randomizeBtn: document.getElementById('randomizeBtn'),
@@ -977,7 +981,6 @@
     shareModal: document.getElementById('shareModal'),
     shareUrlInput: document.getElementById('shareUrlInput'),
     copyShareUrlBtn: document.getElementById('copyShareUrlBtn'),
-    shareCopyStatus: document.getElementById('shareCopyStatus'),
     shareModalClose: document.getElementById('shareModalClose')
   };
 
@@ -1817,7 +1820,7 @@
             
       // Show modal with URL
       DOM.shareUrlInput.value = url;
-      DOM.shareCopyStatus.style.display = 'none';
+      DOM.copyShareUrlBtn.textContent = 'Copy to clipboard';
       DOM.shareModal.classList.add('open');
     },
     
@@ -1827,12 +1830,20 @@
       
       try {
         await navigator.clipboard.writeText(url);
-        DOM.shareCopyStatus.style.display = 'contents';
+        const originalText = DOM.copyShareUrlBtn.textContent;
+        DOM.copyShareUrlBtn.textContent = '✓ Copied!';
+        setTimeout(() => {
+          DOM.copyShareUrlBtn.textContent = originalText;
+        }, 2000);
       } catch (e) {
         // Fallback for older browsers
         DOM.shareUrlInput.select();
         document.execCommand('copy');
-        DOM.shareCopyStatus.style.display = 'contents';
+        const originalText = DOM.copyShareUrlBtn.textContent;
+        DOM.copyShareUrlBtn.textContent = '✓ Copied!';
+        setTimeout(() => {
+          DOM.copyShareUrlBtn.textContent = originalText;
+        }, 2000);
       }
     },
     
@@ -1970,9 +1981,6 @@
             <p>Start designing your blanket to see yarn quantities!</p>
           </div>
         `;
-        if (DOM.yarnTotal) {
-          DOM.yarnTotal.textContent = 'Total: 0m · 0yds';
-        }
         return;
       }
       
@@ -2056,15 +2064,133 @@
         html += '</div>';
       }
       
+      // Add total at end
+      html += `
+        <div class="yarn-section">
+          <div class="yarn-section-title">Total</div>
+          <div class="yarn-amount">${this.formatAmount(totalMeters)}</div>
+        </div>
+      `;
+      
       DOM.yarnModalBody.innerHTML = html;
-      if (DOM.yarnTotal) {
-        DOM.yarnTotal.textContent = `Total: ${this.formatAmount(totalMeters)}`;
+    },
+    
+    // Generate plain text version of yarn quantities
+    generatePlainText() {
+      const { backgrounds, borders, animals, totalMeters, paintedCount } = this.calculate();
+      
+      if (paintedCount === 0) {
+        return 'No yarn quantities to show yet. Start designing your blanket!';
       }
+      
+      let text = '🧶 YARN QUANTITIES\n';
+      text += '================================\n\n';
+      
+      // Blanket size
+      text += `📐 Estimated size: ${UI.getBlanketDimensionsText()}\n\n`;
+      
+      // Backgrounds
+      const bgEntries = Object.entries(backgrounds);
+      if (bgEntries.length > 0) {
+        text += '▸ BASE SQUARES\n';
+        for (const [color, data] of bgEntries) {
+          const colorName = this.getColorName(color);
+          text += `  ${colorName}: ${this.formatAmount(data.amount)} (${data.count} squares)\n`;
+        }
+        text += '\n';
+      }
+      
+      // Borders
+      const borderEntries = Object.entries(borders);
+      if (borderEntries.length > 0) {
+        text += '▸ BORDERS\n';
+        for (const [color, data] of borderEntries) {
+          const colorName = this.getColorName(color);
+          text += `  ${colorName}: ${this.formatAmount(data.amount)} (${data.count} squares)\n`;
+        }
+        text += '\n';
+      }
+      
+      // Animals
+      const animalEntries = Object.entries(animals);
+      if (animalEntries.length > 0) {
+        animalEntries.sort((a, b) => b[1] - a[1]);
+        text += '▸ ANIMALS\n';
+        for (const [colorName, amount] of animalEntries) {
+          text += `  ${colorName}: ${this.formatAmount(amount)}\n`;
+        }
+        text += '\n';
+      }
+      
+      // Total
+      text += `================================\n`;
+      text += `TOTAL: ${this.formatAmount(totalMeters)}\n\n`;
+      text += `💡 These estimates are based on a tight-to-average crochet tension.\n`;
+      text += `Created with morganeyarn.com blanket designer`;
+      
+      return text;
+    },
+    
+    // Copy yarn quantities to clipboard
+    async copyToClipboard() {
+      const text = this.generatePlainText();
+      
+      try {
+        await navigator.clipboard.writeText(text);
+        // Temporarily change button text to show success
+        const originalText = DOM.yarnCopyBtn.textContent;
+        DOM.yarnCopyBtn.textContent = 'Copied!';
+        setTimeout(() => {
+          DOM.yarnCopyBtn.textContent = originalText;
+        }, 2000);
+      } catch (e) {
+        // Fallback for older browsers
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        const originalText = DOM.yarnCopyBtn.textContent;
+        DOM.yarnCopyBtn.textContent = 'Copied!';
+        setTimeout(() => {
+          DOM.yarnCopyBtn.textContent = originalText;
+        }, 2000);
+      }
+    },
+    
+    // Share yarn quantities via Web Share API or mailto fallback
+    async share() {
+      const text = this.generatePlainText();
+      const title = 'My Blanket Yarn Quantities';
+      
+      // Try Web Share API first (works great on mobile)
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: title,
+            text: text
+          });
+          return;
+        } catch (e) {
+          // User cancelled or share failed, fall through to mailto
+          if (e.name === 'AbortError') return; // User cancelled
+        }
+      }
+      
+      // Fallback to mailto
+      const subject = encodeURIComponent(title);
+      const body = encodeURIComponent(text);
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
     },
     
     // Open modal
     openModal() {
       this.renderModal();
+      DOM.yarnCopyBtn.textContent = 'Copy to clipboard';
       DOM.yarnModal.classList.add('open');
     },
     
@@ -2219,6 +2345,15 @@
       
       DOM.yarnModalClose.addEventListener('click', () => {
         YarnCalculator.closeModal();
+      });
+      
+      // Yarn modal copy and share buttons
+      DOM.yarnCopyBtn.addEventListener('click', () => {
+        YarnCalculator.copyToClipboard();
+      });
+      
+      DOM.yarnShareBtn.addEventListener('click', () => {
+        YarnCalculator.share();
       });
       
       // Close modal when clicking overlay
