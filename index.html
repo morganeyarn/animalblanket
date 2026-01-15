@@ -71,7 +71,8 @@
     gap: 2px;
     justify-content: center;
     align-content: center;
-    overflow-y: auto;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
   }
   #gridInner {
     display: grid;
@@ -507,6 +508,10 @@
     #hint {
       display: block;
     }
+    #grid {
+      padding-top: 60px;
+      padding-bottom: 1rem;
+    }
     .square {
       border: 6px solid transparent;
     }
@@ -940,6 +945,12 @@
       });
       
       return this._html2canvasPromise;
+    },
+    
+    // Get responsive square size based on screen width
+    getSquareSizeRange() {
+      const isMobile = window.innerWidth <= 800;
+      return isMobile ? 'minmax(56px, 100px)' : 'minmax(76px, 116px)';
     }
   };
 
@@ -1090,7 +1101,7 @@
       
       // Setup grid CSS
       gridInner.style.display = 'grid';
-      gridInner.style.gridTemplateColumns = `repeat(${newCols}, minmax(76px, 116px))`;
+      gridInner.style.gridTemplateColumns = `repeat(${newCols}, ${Utils.getSquareSizeRange()})`;
       gridInner.innerHTML = '';
 
       // Create squares
@@ -1140,7 +1151,7 @@
       DOM.layoutSelect.value = `${cols}x${rows}`;
       
       const gridInner = DOM.gridInner;
-      gridInner.style.gridTemplateColumns = `repeat(${cols}, minmax(76px, 116px))`;
+      gridInner.style.gridTemplateColumns = `repeat(${cols}, ${Utils.getSquareSizeRange()})`;
       gridInner.innerHTML = '';
       
       for (let i = 0; i < cols * rows; i++) {
@@ -2393,6 +2404,8 @@
           DOM.closeBtn.style.display = 'flex';
           DOM.header.style.display = 'flex';
         }
+        // Update grid square sizes for responsive layout
+        DOM.gridInner.style.gridTemplateColumns = `repeat(${State.grid.cols}, ${Utils.getSquareSizeRange()})`;
         UI.updateLayoutLabels();
       }, Config.RESIZE_DEBOUNCE_MS));
 
@@ -2441,6 +2454,9 @@
 
       gridInner.addEventListener('touchmove', (e) => {
         if (!State.isPainting) return;
+        
+        // Prevent scrolling while painting
+        e.preventDefault();
         
         const touch = e.touches[0];
         const elem = document.elementFromPoint(touch.clientX, touch.clientY);
