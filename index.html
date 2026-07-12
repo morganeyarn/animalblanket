@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="mobile-web-app-capable" content="yes">
   <title>Animal Blanket Designer · morganeyarn</title>
+  <meta name="description" content="Design your own crochet animal blanket: pick a layout, paint square colors and borders, add animal motifs, then share your design or export it.">
+  <meta property="og:title" content="Animal Blanket Designer · morganeyarn">
+  <meta property="og:description" content="Design your own crochet animal blanket: pick colors, borders and animal motifs, then share your creation.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="morganeyarn-blanket.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
   html, body {
     background-image: url(https://morganepeng.com/img/dot_grid2.png);
@@ -64,7 +72,6 @@
   }
 
   #grid {
-    padding-top: 60px;
     flex: 1;
     display: grid;
     padding: 1rem;
@@ -147,11 +154,15 @@
   .color-button {
     width: 32px;
     height: 32px;
+    min-width: 0;
+    padding: 0;
     border: 2px solid #ccc;
     border-radius: 50%;
     cursor: pointer;
     position: relative;
     box-sizing: border-box;
+    box-shadow: none;
+    font-size: 0;
   }
   .color-button.selected {
     border-color: #000;
@@ -170,6 +181,9 @@
   }
   .icon-button {
     height: 56px;
+    min-width: 0;
+    padding: 0;
+    box-shadow: none;
     border: 2px solid transparent;
     background: #eeeeee;
     display: flex;
@@ -177,6 +191,9 @@
     justify-content: center;
     cursor: pointer;
     border-radius: 8px;
+  }
+  .icon-button:hover {
+    background: #eeeeee;
   }
   .icon-button.selected {
     border-color: black;
@@ -190,9 +207,13 @@
     height: 32px;
     box-sizing: border-box;
   }
-  input[type="color"].selected,
-  input[type="color"]:focus {
-    outline: none;
+  input[type="color"]:focus-visible,
+  .square:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+  }
+  .square:focus-visible {
+    outline-offset: -2px;
   }
 
   select, button {
@@ -205,13 +226,10 @@
   }
   select {
     border: 1px solid #ccc;
-    background: white;
+    background-color: white;
     color: #333;
     cursor: pointer;
     padding-right: 2em;
-    background-position: right 0.75em center;
-    background-repeat: no-repeat;
-    background-size: 0.65em auto;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -221,11 +239,7 @@
     background-size: 0.65em auto;
   }
   select:hover {
-    background: #f9f9f9;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpolyline points='4,8 10,14 16,8' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.75em center;
-    background-size: 0.65em auto;
+    background-color: #f9f9f9;
   }
   button {
     border: 1px solid #ccc;
@@ -434,6 +448,29 @@
     margin-bottom: 1.25rem;
     line-height: 1.4;
   }
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: #333;
+    color: #fff;
+    padding: 0.6em 1.2em;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    max-width: 90vw;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+    z-index: 1200;
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  #toast.error {
+    background: #b3261e;
+  }
   .mode-toggle {
     display: flex;
     width: 100%;
@@ -483,16 +520,6 @@
   @media (max-width: 1260px) {
     .hide-ms {
       display: none;
-    }
-    #controls {
-      display: block; 
-      width: 380px;
-      padding: 1rem;
-      border-left: 1px solid #ddd;
-      background: #fff;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
     }
     .square svg {
       width:85%;
@@ -555,13 +582,13 @@
     </div>
     <select id="layout">
       <option value="4x4" data-short="4 x 4">4 x 4 squares</option>
-      <option value="4x5" data-short="4 x 6">4 x 6 squares</option>
+      <option value="4x6" data-short="4 x 6">4 x 6 squares</option>
       <option value="5x5" data-short="5 x 5">5 x 5 squares</option>
       <option value="5x6" data-short="5 x 6" selected>5 x 6 squares</option>
       <option value="6x5" data-short="6 x 5">6 x 5 squares</option>
       <option value="6x6" data-short="6 x 6">6 x 6 squares</option>
       <option value="6x8" data-short="6 x 8">6 x 8 squares</option>
-      <option value="7x7" data-short="6 x 8">7 x 7 squares</option>
+      <option value="7x7" data-short="7 x 7">7 x 7 squares</option>
     </select>
   </div>
   <div class="button-group">
@@ -569,7 +596,7 @@
     <button id="redoBtn" aria-label="Redo" title="Redo (Ctrl+Y)" disabled><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M396-200q-97 0-166.5-63T160-420q0-94 69.5-157T396-640h252L544-744l56-56 200 200-200 200-56-56 104-104H396q-63 0-109.5 40T240-420q0 60 46.5 100T396-280h284v80H396Z"/></svg></button>
     <button id="exportBtn" aria-label="Export as image" title="Export as image"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg></button>
     <div class="dropdown">
-      <button id="menuBtn" aria-label="More options" title="More options"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-160q-33 0-56.5-23.5T400-240q0-33 23.5-56.5T480-320q33 0 56.5 23.5T560-240q0 33-23.5 56.5T480-160Zm0-240q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm0-240q-33 0-56.5-23.5T400-720q0-33 23.5-56.5T480-800q33 0 56.5 23.5T560-720q0 33-23.5 56.5T480-640Z"/></svg></button>
+      <button id="menuBtn" aria-label="More options" title="More options" aria-haspopup="true" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-160q-33 0-56.5-23.5T400-240q0-33 23.5-56.5T480-320q33 0 56.5 23.5T560-240q0 33-23.5 56.5T480-160Zm0-240q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm0-240q-33 0-56.5-23.5T400-720q0-33 23.5-56.5T480-800q33 0 56.5 23.5T560-720q0 33-23.5 56.5T480-640Z"/></svg></button>
       <div id="dropdownMenu" class="dropdown-menu">
         <button id="yarnQuantitiesBtn" class="dropdown-item">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M208-120q-37 0-62.5-25.5T120-208v-548q0-29 27-40.5t47 8.5l90 90-54 54 28 28 54-54 104 104-54 54 28 28 54-54 104 104-54 54 28 28 54-54 104 104-54 54 28 28 54-54 80 80q20 20 8.5 47T756-120H208Zm32-120h332L240-572v332Z"/></svg>
@@ -602,9 +629,9 @@
 
 <!-- Yarn Quantities Modal -->
 <div id="yarnModal" class="modal-overlay">
-  <div class="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="yarnModalTitle">
     <div class="modal-header">
-      <h2>Yarn quantities</h2>
+      <h2 id="yarnModalTitle">Yarn quantities</h2>
       <button id="yarnModalClose" class="modal-close" aria-label="Close">
         <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
       </button>
@@ -623,9 +650,9 @@
 
 <!-- Share Link Modal -->
 <div id="shareModal" class="modal-overlay">
-  <div class="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle">
     <div class="modal-header">
-    <h2>Share your design</h2>
+    <h2 id="shareModalTitle">Share your design</h2>
       <button id="shareModalClose" class="modal-close" aria-label="Close">
         <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
       </button>
@@ -661,7 +688,7 @@
     <button type="button" class="mode-btn" data-mode="pattern">Animal</button>
   </div>
   </div>
-  <div class="control-group">
+  <div class="control-group" id="colorControls">
     <h2>Square colors</h2>
     <div class="control-sub-group">
       <h3>Background</h3>
@@ -678,16 +705,18 @@
       </div>
     </div>
   </div>
-  <div class="control-group">
+  <div class="control-group" id="patternControls">
     <h2>Square animals</h2>
     <div class="icon-grid" id="iconGrid"></div>
   </div>
   <div class="control-footer button-group-space-between hide-xs">
     <button id="applyAllBtn" class="flex-grow">Set all</button>
     <button id="randomizeBtn" class="flex-grow">Shuffle</button>
-    <button id="clearBtn" aria-label="Clear" class="flex-grow" class="hide-ms">Clear</button>
+    <button id="clearBtn" aria-label="Clear" class="flex-grow">Clear</button>
   </div>
 </aside>
+
+<div id="toast" role="status" aria-live="polite"></div>
 
 <script>
 (() => {
@@ -822,18 +851,25 @@
     isPainting: false,
     currentBulkAction: [],
     
-    // Track if any changes made (for clear button)
-    hasChanges: false,
+    // True when there are changes not yet saved to a file (drives the
+    // beforeunload warning); reset on save and on loading a design
+    isDirty: false,
 
-    // Push to undo with limit enforcement
-    pushUndo(action) {
+    // Push to undo WITHOUT clearing redo (used by History.redo, where the
+    // redo stack must survive the push)
+    pushUndoPreservingRedo(action) {
       this.undoStack.push(action);
       // Enforce stack limit
       if (this.undoStack.length > Config.UNDO_STACK_LIMIT) {
         this.undoStack.shift(); // Remove oldest action
       }
+      this.isDirty = true;
+    },
+
+    // Push to undo with limit enforcement
+    pushUndo(action) {
+      this.pushUndoPreservingRedo(action);
       this.redoStack = []; // Clear redo on new action
-      this.hasChanges = true;
     },
 
     // Pop from undo
@@ -858,7 +894,6 @@
     clearHistory() {
       this.undoStack = [];
       this.redoStack = [];
-      this.hasChanges = false;
     },
 
     // Update selection
@@ -917,11 +952,23 @@
       return Config.ICON_SVGS.find(icon => icon.id === iconId) || null;
     },
     
-    // Find icon ID by SVG string (for backwards compatibility)
-    getIconIdBySvg(svgString) {
-      if (!svgString) return null;
-      const icon = Config.ICON_SVGS.find(icon => icon.svg === svgString);
-      return icon ? icon.id : null;
+    // Normalize color to hex format for comparison
+    normalizeColor(color) {
+      if (!color || color === 'transparent') return 'transparent';
+      
+      // If already hex, return lowercase
+      if (color.startsWith('#')) return color.toLowerCase();
+      
+      // Convert rgb/rgba to hex
+      const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        const r = parseInt(match[1]).toString(16).padStart(2, '0');
+        const g = parseInt(match[2]).toString(16).padStart(2, '0');
+        const b = parseInt(match[3]).toString(16).padStart(2, '0');
+        return `#${r}${g}${b}`;
+      }
+      
+      return color.toLowerCase();
     },
 
     // Lazy load html2canvas
@@ -1059,7 +1106,6 @@
         }
       }
       
-      State.hasChanges = true;
     },
 
     // Restore a square from snapshot
@@ -1108,9 +1154,13 @@
         square.dataset.index = i;
         square.dataset.iconId = '';  // Initialize iconId data attribute
         
+        const { row, col } = Utils.indexToCoords(i, newCols);
+        square.setAttribute('role', 'button');
+        square.setAttribute('tabindex', '0');
+        square.setAttribute('aria-label', `Square row ${row + 1}, column ${col + 1}`);
+        
         // Apply preserved content if available
         if (previousSnapshot) {
-          const { row, col } = Utils.indexToCoords(i, newCols);
           const preserved = previousSnapshot.squares.find(
             s => s.row === row && s.col === col
           );
@@ -1128,12 +1178,12 @@
         gridInner.appendChild(square);
       }
 
-      // Record layout change for undo (if we had previous content)
+      // Record layout change for undo (if we had previous content).
+      // The action stores the snapshot to restore when it is undone.
       if (previousSnapshot) {
         State.pushUndo({
           type: 'layout',
-          before: previousSnapshot,
-          after: this.snapshotGridWithCoords()
+          snapshot: previousSnapshot
         });
         UI.updateUndoRedoButtons();
       }
@@ -1157,6 +1207,9 @@
         square.dataset.iconId = '';
         
         const { row, col } = Utils.indexToCoords(i, cols);
+        square.setAttribute('role', 'button');
+        square.setAttribute('tabindex', '0');
+        square.setAttribute('aria-label', `Square row ${row + 1}, column ${col + 1}`);
         const preserved = squares.find(s => s.row === row && s.col === col);
         
         if (preserved) {
@@ -1190,7 +1243,6 @@
         }
       });
       
-      State.hasChanges = false;
       UI.updateUndoRedoButtons();
     },
 
@@ -1209,6 +1261,7 @@
       const squares = DOM.gridInner.querySelectorAll('.square');
       const snapshot = Array.from(squares).map(s => this.snapshotSquare(s));
       State.pushUndo(snapshot);
+      const validIcons = Config.ICON_SVGS.filter(icon => icon && icon.id && icon.svg);
 
       squares.forEach(square => {
         if (State.editMode === 'all' || State.editMode === 'color') {
@@ -1226,9 +1279,9 @@
           square.innerHTML = '';
           square.dataset.iconId = '';
           
-          if (Math.random() >= 0.5 && Config.ICON_SVGS.length > 0) {
-            const randomIcon = Config.ICON_SVGS[
-              Math.floor(Math.random() * Config.ICON_SVGS.length)
+          if (Math.random() >= 0.5 && validIcons.length > 0) {
+            const randomIcon = validIcons[
+              Math.floor(Math.random() * validIcons.length)
             ];
             square.innerHTML = randomIcon.svg;
             square.dataset.iconId = randomIcon.id;
@@ -1236,7 +1289,6 @@
         }
       });
 
-      State.hasChanges = true;
       UI.updateUndoRedoButtons();
     }
   };
@@ -1255,15 +1307,14 @@
       const lastAction = State.popUndo();
       if (!lastAction) return;
 
-      // Handle layout change
+      // Handle layout change: the redo action stores the current state so
+      // redoing can bring it back
       if (lastAction.type === 'layout') {
-        const currentSnapshot = Grid.snapshotGridWithCoords();
         State.pushRedo({
           type: 'layout',
-          before: currentSnapshot,
-          after: lastAction.before
+          snapshot: Grid.snapshotGridWithCoords()
         });
-        Grid.restoreFromLayoutSnapshot(lastAction.before);
+        Grid.restoreFromLayoutSnapshot(lastAction.snapshot);
       } else {
         // Handle square changes
         const actions = Array.isArray(lastAction) ? lastAction : [lastAction];
@@ -1288,20 +1339,14 @@
       const nextAction = State.popRedo();
       if (!nextAction) return;
 
-      // Handle layout change
+      // Handle layout change: the undo action stores the current state so
+      // undoing can bring it back
       if (nextAction.type === 'layout') {
-        const currentSnapshot = Grid.snapshotGridWithCoords();
-        // Direct push to avoid clearing redo stack
-        State.undoStack.push({
+        State.pushUndoPreservingRedo({
           type: 'layout',
-          before: currentSnapshot,
-          after: nextAction.before
+          snapshot: Grid.snapshotGridWithCoords()
         });
-        // Enforce stack limit
-        if (State.undoStack.length > Config.UNDO_STACK_LIMIT) {
-          State.undoStack.shift();
-        }
-        Grid.restoreFromLayoutSnapshot(nextAction.before);
+        Grid.restoreFromLayoutSnapshot(nextAction.snapshot);
       } else {
         // Handle square changes - snapshot CURRENT squares at those coordinates
         const undoSnapshot = nextAction.map(action => {
@@ -1311,11 +1356,7 @@
         }).filter(Boolean);
         
         if (undoSnapshot.length > 0) {
-          State.undoStack.push(undoSnapshot); // Direct push to avoid clearing redo
-          // Enforce stack limit
-          if (State.undoStack.length > Config.UNDO_STACK_LIMIT) {
-            State.undoStack.shift();
-          }
+          State.pushUndoPreservingRedo(undoSnapshot);
         }
         nextAction.forEach(Grid.restoreSquare);
       }
@@ -1328,6 +1369,22 @@
   // UI MODULE
   // ============================================================
   const UI = {
+    // Open/close dropdown menu, keeping aria-expanded in sync
+    setMenuOpen(open) {
+      DOM.dropdownMenu.classList.toggle('open', open);
+      DOM.menuBtn.setAttribute('aria-expanded', String(open));
+    },
+
+    // Show a transient toast notification (gentler than alert())
+    showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.toggle('error', isError);
+      toast.classList.add('show');
+      clearTimeout(this._toastTimer);
+      this._toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+    },
+
     updateUndoRedoButtons() {
       DOM.undoBtn.disabled = State.undoStack.length === 0;
       DOM.redoBtn.disabled = State.redoStack.length === 0;
@@ -1362,18 +1419,33 @@
       DOM.header.style.display = isOpen ? 'none' : 'flex';
     },
 
+    // Mark one palette button as selected (class + aria-pressed)
+    selectPaletteButton(container, selectedBtn) {
+      container.querySelectorAll('.color-button').forEach(b => {
+        b.classList.remove('selected');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      if (selectedBtn) {
+        selectedBtn.classList.add('selected');
+        selectedBtn.setAttribute('aria-pressed', 'true');
+      }
+    },
+
     createPalette(container, colors, key) {
       container.innerHTML = '';
+      const labelPrefix = key === 'border' ? 'Border' : 'Background';
       
       if (key === 'border') {
-        const transparentBtn = document.createElement('div');
+        const transparentBtn = document.createElement('button');
+        transparentBtn.type = 'button';
         transparentBtn.className = 'color-button selected';
+        transparentBtn.setAttribute('aria-label', 'No border');
+        transparentBtn.setAttribute('aria-pressed', 'true');
         transparentBtn.style.backgroundColor = 'transparent';
-        transparentBtn.innerHTML = '<svg viewBox="0 0 32 32" width="32" height="32" style="position:absolute;top:0;left:0;"><line x1="4" y1="24" x2="24" y2="4" stroke="red" stroke-width="2" /></svg>';
+        transparentBtn.innerHTML = '<svg viewBox="0 0 32 32" width="32" height="32" style="position:absolute;top:0;left:0;" aria-hidden="true"><line x1="4" y1="24" x2="24" y2="4" stroke="red" stroke-width="2" /></svg>';
         State.setSelection(key, 'transparent');
         transparentBtn.addEventListener('click', () => {
-          container.querySelectorAll('.color-button').forEach(b => b.classList.remove('selected'));
-          transparentBtn.classList.add('selected');
+          this.selectPaletteButton(container, transparentBtn);
           State.setSelection(key, 'transparent');
           DOM.borderColorInput.classList.remove('selected');
         });
@@ -1381,13 +1453,16 @@
       }
 
       colors.forEach((color, index) => {
-        const btn = document.createElement('div');
-        btn.className = 'color-button' + (key !== 'border' && index === 0 ? ' selected' : '');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        const isDefault = key !== 'border' && index === 0;
+        btn.className = 'color-button' + (isDefault ? ' selected' : '');
         btn.style.backgroundColor = color;
-        if (key !== 'border' && index === 0) State.setSelection(key, color);
+        btn.setAttribute('aria-label', `${labelPrefix} color ${Config.COLOR_NAMES[color] || color}`);
+        btn.setAttribute('aria-pressed', String(isDefault));
+        if (isDefault) State.setSelection(key, color);
         btn.addEventListener('click', () => {
-          container.querySelectorAll('.color-button').forEach(b => b.classList.remove('selected'));
-          btn.classList.add('selected');
+          this.selectPaletteButton(container, btn);
           State.setSelection(key, color);
           if (key === 'bg') DOM.bgColorInput.classList.remove('selected');
           if (key === 'border') DOM.borderColorInput.classList.remove('selected');
@@ -1400,9 +1475,11 @@
       DOM.iconGrid.innerHTML = '';
       
       // "None" button
-      const noneBtn = document.createElement('div');
+      const noneBtn = document.createElement('button');
+      noneBtn.type = 'button';
       noneBtn.className = 'icon-button selected';
       noneBtn.textContent = 'None';
+      noneBtn.setAttribute('aria-pressed', 'true');
       noneBtn.addEventListener('click', () => {
         State.setIconSelection(null, '');
         this.updateIconSelection(noneBtn);
@@ -1411,10 +1488,14 @@
 
       // Icon buttons - using object structure with id and svg
       Config.ICON_SVGS.forEach((icon) => {
-        const btn = document.createElement('div');
+        if (!icon || !icon.id || !icon.svg) return; // Skip incomplete entries
+        const btn = document.createElement('button');
+        btn.type = 'button';
         btn.className = 'icon-button';
         btn.innerHTML = icon.svg;
         btn.dataset.iconId = icon.id;  // Store icon ID on button for reference
+        btn.setAttribute('aria-label', icon.id.replace(/_/g, ' '));
+        btn.setAttribute('aria-pressed', 'false');
         btn.addEventListener('click', () => {
           State.setIconSelection(icon.id, icon.svg);
           this.updateIconSelection(btn);
@@ -1424,8 +1505,12 @@
     },
 
     updateIconSelection(selectedBtn) {
-      DOM.iconGrid.querySelectorAll('.icon-button').forEach(b => b.classList.remove('selected'));
+      DOM.iconGrid.querySelectorAll('.icon-button').forEach(b => {
+        b.classList.remove('selected');
+        b.setAttribute('aria-pressed', 'false');
+      });
       selectedBtn.classList.add('selected');
+      selectedBtn.setAttribute('aria-pressed', 'true');
     },
 
     setEditMode(mode) {
@@ -1433,8 +1518,8 @@
       document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
       document.querySelector(`[data-mode="${mode}"]`).classList.add('selected');
       
-      const colorControls = document.querySelectorAll('.control-group')[1];
-      const patternControls = document.querySelectorAll('.control-group')[2];
+      const colorControls = document.getElementById('colorControls');
+      const patternControls = document.getElementById('patternControls');
       
       if (mode === 'color') {
         colorControls.style.display = 'block';
@@ -1486,17 +1571,24 @@
         return { valid: false, error: 'Invalid data format' };
       }
       
-      if (!data.layout || typeof data.layout.cols !== 'number' || typeof data.layout.rows !== 'number') {
+      if (!data.layout || !Number.isInteger(data.layout.cols) || !Number.isInteger(data.layout.rows)) {
         return { valid: false, error: 'Invalid layout data' };
+      }
+      
+      // Bounds check: prevents a corrupt file from creating millions of squares
+      if (data.layout.cols < 1 || data.layout.cols > 12 || data.layout.rows < 1 || data.layout.rows > 12) {
+        return { valid: false, error: 'Layout dimensions out of range (1-12)' };
       }
       
       if (!Array.isArray(data.squares)) {
         return { valid: false, error: 'Invalid squares data' };
       }
       
-      // Validate each square has required properties
+      // Validate each square has required properties and in-bounds coordinates
       for (const square of data.squares) {
-        if (typeof square.row !== 'number' || typeof square.col !== 'number') {
+        if (!Number.isInteger(square.row) || !Number.isInteger(square.col) ||
+            square.row < 0 || square.row >= data.layout.rows ||
+            square.col < 0 || square.col >= data.layout.cols) {
           return { valid: false, error: 'Invalid square coordinates' };
         }
       }
@@ -1549,7 +1641,8 @@
         }
       });
       
-      State.hasChanges = true;
+      // A freshly loaded design has nothing unsaved
+      State.isDirty = false;
     },
     
     // Download design as JSON file
@@ -1565,6 +1658,9 @@
       link.click();
       
       URL.revokeObjectURL(url);
+      
+      // Design is saved — no unsaved changes to warn about
+      State.isDirty = false;
     },
     
     // Load design from JSON file
@@ -1692,10 +1788,12 @@
       });
       
       // Append custom colors if any
+      // Counts are encoded via encodeChar (single char, up to 35) — backward
+      // compatible with the old digit encoding for counts 0-9
       if (customBgColors.length > 0 || customBorderColors.length > 0) {
         encoded += '-';
-        encoded += customBgColors.length.toString();
-        encoded += customBorderColors.length.toString();
+        encoded += this.encodeChar(customBgColors.length);
+        encoded += this.encodeChar(customBorderColors.length);
         customBgColors.forEach(c => encoded += c.replace('#', ''));
         customBorderColors.forEach(c => encoded += c.replace('#', ''));
       }
@@ -1734,18 +1832,22 @@
           const colorSection = squareDataStr.substring(dashIndex + 1);
           squareDataStr = squareDataStr.substring(0, dashIndex);
           
-          // Parse custom color counts
-          const numCustomBg = parseInt(colorSection[0]) || 0;
-          const numCustomBorder = parseInt(colorSection[1]) || 0;
+          // Parse custom color counts (decodeChar handles both old digit
+          // encoding and the extended a-z encoding)
+          const numCustomBg = this.decodeChar(colorSection[0] || '0');
+          const numCustomBorder = this.decodeChar(colorSection[1] || '0');
           
-          // Extract custom colors (6 chars each)
+          // Extract custom colors (6 chars each), validating hex format
+          const HEX_RE = /^[0-9a-f]{6}$/i;
           let colorPos = 2;
           for (let i = 0; i < numCustomBg; i++) {
-            customBgColors.push('#' + colorSection.substring(colorPos, colorPos + 6));
+            const hex = colorSection.substring(colorPos, colorPos + 6);
+            customBgColors.push(HEX_RE.test(hex) ? '#' + hex : Config.PRESET_BG_COLORS[0]);
             colorPos += 6;
           }
           for (let i = 0; i < numCustomBorder; i++) {
-            customBorderColors.push('#' + colorSection.substring(colorPos, colorPos + 6));
+            const hex = colorSection.substring(colorPos, colorPos + 6);
+            customBorderColors.push(HEX_RE.test(hex) ? '#' + hex : Config.PRESET_BORDER_COLORS[0]);
             colorPos += 6;
           }
         }
@@ -1826,9 +1928,11 @@
       const url = window.location.origin + window.location.pathname + '#' + encoded;
             
       // Show modal with URL
+      this._lastFocused = document.activeElement;
       DOM.shareUrlInput.value = url;
       DOM.copyShareUrlBtn.textContent = 'Copy to clipboard';
       DOM.shareModal.classList.add('open');
+      DOM.shareModalClose.focus();
     },
     
     // Copy URL to clipboard
@@ -1857,6 +1961,11 @@
     // Close share modal
     closeModal() {
       DOM.shareModal.classList.remove('open');
+      if (this._lastFocused && this._lastFocused.isConnected) {
+        this._lastFocused.focus();
+      } else {
+        DOM.menuBtn.focus();
+      }
     }
   };
 
@@ -1880,23 +1989,9 @@
       return currentBg !== defaultBg || currentBorder !== defaultBorder || hasIcon;
     },
     
-    // Normalize color to hex format for comparison
+    // Normalize color to hex format for comparison (shared implementation)
     normalizeColor(color) {
-      if (!color || color === 'transparent') return 'transparent';
-      
-      // If already hex, return lowercase
-      if (color.startsWith('#')) return color.toLowerCase();
-      
-      // Convert rgb/rgba to hex
-      const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-      if (match) {
-        const r = parseInt(match[1]).toString(16).padStart(2, '0');
-        const g = parseInt(match[2]).toString(16).padStart(2, '0');
-        const b = parseInt(match[3]).toString(16).padStart(2, '0');
-        return `#${r}${g}${b}`;
-      }
-      
-      return color.toLowerCase();
+      return Utils.normalizeColor(color);
     },
     
     // Convert meters to yards
@@ -2196,14 +2291,21 @@
     
     // Open modal
     openModal() {
+      this._lastFocused = document.activeElement;
       this.renderModal();
       DOM.yarnCopyBtn.textContent = 'Copy to clipboard';
       DOM.yarnModal.classList.add('open');
+      DOM.yarnModalClose.focus();
     },
     
     // Close modal
     closeModal() {
       DOM.yarnModal.classList.remove('open');
+      if (this._lastFocused && this._lastFocused.isConnected) {
+        this._lastFocused.focus();
+      } else {
+        DOM.menuBtn.focus();
+      }
     }
   };
 
@@ -2237,12 +2339,12 @@
         document.body.removeChild(wrapper);
         
         const link = document.createElement('a');
-        link.download = 'crochet_layout.png';
+        link.download = `blanket-design-${new Date().toISOString().slice(0, 10)}.png`;
         link.href = canvas.toDataURL();
         link.click();
       } catch (error) {
         console.error('Export failed:', error);
-        alert('Export failed. Please try again.');
+        UI.showToast('Export failed. Please try again.', true);
       } finally {
         DOM.exportBtn.disabled = false;
       }
@@ -2285,11 +2387,11 @@
       DOM.redoBtn.addEventListener('click', History.redo);
       DOM.saveJsonBtn.addEventListener('click', () => {
         DataIO.saveToFile();
-        DOM.dropdownMenu.classList.remove('open');
+        UI.setMenuOpen(false);
       });
       DOM.loadJsonBtn.addEventListener('click', () => {
         DOM.loadJsonInput.click();
-        DOM.dropdownMenu.classList.remove('open');
+        UI.setMenuOpen(false);
       });
       DOM.loadJsonInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
@@ -2298,7 +2400,7 @@
             await DataIO.loadFromFile(file);
             console.log('Design loaded successfully');
           } catch (error) {
-            alert('Failed to load design: ' + error.message);
+            UI.showToast('Failed to load design: ' + error.message, true);
             console.error(error);
           }
           // Reset input so same file can be loaded again
@@ -2313,25 +2415,25 @@
       // Dropdown menu toggle
       DOM.menuBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        DOM.dropdownMenu.classList.toggle('open');
+        UI.setMenuOpen(!DOM.dropdownMenu.classList.contains('open'));
       });
       
       // Close dropdown when clicking outside
       document.addEventListener('click', (e) => {
         if (!DOM.dropdownMenu.contains(e.target) && e.target !== DOM.menuBtn) {
-          DOM.dropdownMenu.classList.remove('open');
+          UI.setMenuOpen(false);
         }
       });
 
       // Yarn quantities modal
       DOM.yarnQuantitiesBtn.addEventListener('click', () => {
-        DOM.dropdownMenu.classList.remove('open');
+        UI.setMenuOpen(false);
         YarnCalculator.openModal();
       });
       
       // Share link
       DOM.shareLinkBtn.addEventListener('click', () => {
-        DOM.dropdownMenu.classList.remove('open');
+        UI.setMenuOpen(false);
         URLShare.share();
       });
       
@@ -2377,13 +2479,40 @@
         UI.setMobileControls(false);
       });
 
+      // Load a shared design pasted into the address bar of an open tab
+      window.addEventListener('hashchange', () => {
+        URLShare.applyFromHash();
+      });
+
+      // Warn before closing the tab with unsaved changes
+      window.addEventListener('beforeunload', (e) => {
+        if (State.isDirty) {
+          e.preventDefault();
+          e.returnValue = ''; // Required by some browsers to show the prompt
+        }
+      });
+
       // Keyboard shortcuts
       document.addEventListener('keydown', e => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        const key = e.key.toLowerCase();
+        
+        if (e.key === 'Escape') {
+          if (DOM.yarnModal.classList.contains('open')) {
+            YarnCalculator.closeModal();
+          } else if (DOM.shareModal.classList.contains('open')) {
+            URLShare.closeModal();
+          } else if (DOM.dropdownMenu.classList.contains('open')) {
+            UI.setMenuOpen(false);
+            DOM.menuBtn.focus();
+          }
+          return;
+        }
+        
+        if ((e.ctrlKey || e.metaKey) && key === 'z' && !e.shiftKey) {
           e.preventDefault();
           History.undo();
         }
-        if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) {
+        if ((e.ctrlKey || e.metaKey) && (key === 'y' || (e.shiftKey && key === 'z'))) {
           e.preventDefault();
           History.redo();
         }
@@ -2434,6 +2563,15 @@
         Grid.applyToSquare(square, false);
       }, true); // Use capture for mouseenter delegation
 
+      // Keyboard painting (Enter or Space on a focused square)
+      gridInner.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        const square = e.target.closest('.square');
+        if (!square) return;
+        e.preventDefault();
+        Grid.applyToSquare(square, true); // record=true pushes its own undo entry
+      });
+
       // Touch events
       gridInner.addEventListener('touchstart', (e) => {
         const touch = e.touches[0];
@@ -2448,6 +2586,7 @@
 
       gridInner.addEventListener('touchmove', (e) => {
         if (!State.isPainting) return;
+        e.preventDefault(); // Stop the page scrolling mid-paint
         
         const touch = e.touches[0];
         const elem = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -2470,14 +2609,13 @@
     },
 
     syncPaletteSelection(palette, input) {
+      const target = Utils.normalizeColor(input.value);
       let matched = false;
       palette.querySelectorAll('.color-button').forEach(b => {
-        if (b.style.backgroundColor === input.value) {
-          b.classList.add('selected');
-          matched = true;
-        } else {
-          b.classList.remove('selected');
-        }
+        const isMatch = Utils.normalizeColor(b.style.backgroundColor) === target;
+        b.classList.toggle('selected', isMatch);
+        b.setAttribute('aria-pressed', String(isMatch));
+        if (isMatch) matched = true;
       });
       input.classList.toggle('selected', !matched);
     }
