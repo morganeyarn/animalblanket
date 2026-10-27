@@ -428,6 +428,15 @@
     font-size: 0.85rem;
     white-space: nowrap;
   }
+  .export-preview {
+    display: block;
+    max-width: 100%;
+    max-height: 50vh;
+    margin: 0 auto 0.75rem;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    -webkit-touch-callout: default;
+  }
   .modal-footer {
     padding: 1rem 1.25rem;
     border-top: 1px solid #e5e5e5;
@@ -668,6 +677,27 @@
         <button id="copyShareUrlBtn" class="flex-grow">Copy to clipboard</button>
       </div>
       </div>
+  </div>
+</div>
+
+<!-- Export Image Modal (touch devices) -->
+<div id="exportModal" class="modal-overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="exportModalTitle">
+    <div class="modal-header">
+      <h2 id="exportModalTitle">Your image is ready</h2>
+      <button id="exportModalClose" class="modal-close" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <img id="exportPreview" class="export-preview" alt="Preview of your blanket design">
+      <div class="yarn-disclaimer">
+        Tap Save image, then choose Save Image to add it to your photos. You can also press and hold the picture above.
+      </div>
+      <div class="button-group-space-between">
+        <button id="exportSaveBtn" class="flex-grow">Save image</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1037,7 +1067,11 @@
     shareModal: document.getElementById('shareModal'),
     shareUrlInput: document.getElementById('shareUrlInput'),
     copyShareUrlBtn: document.getElementById('copyShareUrlBtn'),
-    shareModalClose: document.getElementById('shareModalClose')
+    shareModalClose: document.getElementById('shareModalClose'),
+    exportModal: document.getElementById('exportModal'),
+    exportModalClose: document.getElementById('exportModalClose'),
+    exportPreview: document.getElementById('exportPreview'),
+    exportSaveBtn: document.getElementById('exportSaveBtn')
   };
 
   // ============================================================
@@ -1657,9 +1691,13 @@
       const link = document.createElement('a');
       link.href = url;
       link.download = `blanket-design-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
       link.click();
+      link.remove();
       
-      URL.revokeObjectURL(url);
+      // iOS shows a "Download?" prompt and only reads the file once the user
+      // taps it, so revoking straight away leaves the button doing nothing
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
       
       // Design is saved — no unsaved changes to warn about
       State.isDirty = false;
@@ -2315,6 +2353,30 @@
   // IMAGE EXPORT MODULE
   // ============================================================
   const Export = {
+    _file: null,
+    _previewUrl: null,
+    _lastFocused: null,
+
+    filename() {
+      return `blanket-design-${new Date().toISOString().slice(0, 10)}.png`;
+    },
+
+    // Phones and tablets: html2canvas takes too long for the tap to still
+    // count as a user action when the download fires, so iOS Safari shows a
+    // prompt that does nothing and iOS Chrome blocks it silently. On these
+    // devices we show the finished image and let a second tap save it.
+    isTouchDevice() {
+      return window.matchMedia('(pointer: coarse)').matches;
+    },
+
+    canShareFile(file) {
+      try {
+        return !!(navigator.canShare && navigator.canShare({ files: [file] }));
+      } catch (e) {
+        return false;
+      }
+    },
+
     async exportAsImage() {
       try {
         // Show loading state
@@ -2337,18 +2399,80 @@
 
         document.body.appendChild(wrapper);
 
-        const canvas = await html2canvas(wrapper, { scale: 2 });
-        document.body.removeChild(wrapper);
-        
-        const link = document.createElement('a');
-        link.download = `blanket-design-${new Date().toISOString().slice(0, 10)}.png`;
-        link.href = canvas.toDataURL();
-        link.click();
+        let canvas;
+        try {
+          canvas = await html2canvas(wrapper, { scale: 2 });
+        } finally {
+          document.body.removeChild(wrapper);
+        }
+
+        const blob = await new Promise((resolve, reject) => {
+          canvas.toBlob(b => b ? resolve(b) : reject(new Error('Could not create image')), 'image/png');
+        });
+        const file = new File([blob], this.filename(), { type: 'image/png' });
+
+        if (this.isTouchDevice()) {
+          this.openModal(file);
+        } else {
+          this.download(file);
+        }
       } catch (error) {
         console.error('Export failed:', error);
         UI.showToast('Export failed. Please try again.', true);
       } finally {
         DOM.exportBtn.disabled = false;
+      }
+    },
+
+    // Classic download via a blob URL (desktop, and fallback on mobile)
+    download(file) {
+      const url = URL.createObjectURL(file);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = file.name;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    },
+
+    // Runs from the "Save image" tap, so the browser treats it as a user action
+    async save() {
+      if (!this._file) return;
+      if (this.canShareFile(this._file)) {
+        try {
+          await navigator.share({ files: [this._file] });
+          this.closeModal();
+          return;
+        } catch (e) {
+          if (e.name === 'AbortError') return; // User closed the share sheet
+        }
+      }
+      this.download(this._file);
+    },
+
+    openModal(file) {
+      this._lastFocused = document.activeElement;
+      this._file = file;
+      if (this._previewUrl) URL.revokeObjectURL(this._previewUrl);
+      this._previewUrl = URL.createObjectURL(file);
+      DOM.exportPreview.src = this._previewUrl;
+      DOM.exportModal.classList.add('open');
+      DOM.exportSaveBtn.focus();
+    },
+
+    closeModal() {
+      DOM.exportModal.classList.remove('open');
+      DOM.exportPreview.removeAttribute('src');
+      if (this._previewUrl) {
+        URL.revokeObjectURL(this._previewUrl);
+        this._previewUrl = null;
+      }
+      this._file = null;
+      if (this._lastFocused && this._lastFocused.isConnected) {
+        this._lastFocused.focus();
+      } else {
+        DOM.exportBtn.focus();
       }
     }
   };
@@ -2458,6 +2582,21 @@
         YarnCalculator.closeModal();
       });
       
+      // Export image modal (touch devices)
+      DOM.exportSaveBtn.addEventListener('click', () => {
+        Export.save();
+      });
+      
+      DOM.exportModalClose.addEventListener('click', () => {
+        Export.closeModal();
+      });
+      
+      DOM.exportModal.addEventListener('click', (e) => {
+        if (e.target === DOM.exportModal) {
+          Export.closeModal();
+        }
+      });
+      
       // Yarn modal copy and share buttons
       DOM.yarnCopyBtn.addEventListener('click', () => {
         YarnCalculator.copyToClipboard();
@@ -2503,6 +2642,8 @@
             YarnCalculator.closeModal();
           } else if (DOM.shareModal.classList.contains('open')) {
             URLShare.closeModal();
+          } else if (DOM.exportModal.classList.contains('open')) {
+            Export.closeModal();
           } else if (DOM.dropdownMenu.classList.contains('open')) {
             UI.setMenuOpen(false);
             DOM.menuBtn.focus();
