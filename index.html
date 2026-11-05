@@ -428,15 +428,6 @@
     font-size: 0.85rem;
     white-space: nowrap;
   }
-  .export-preview {
-    display: block;
-    max-width: 100%;
-    max-height: 50vh;
-    margin: 0 auto 0.75rem;
-    border: 1px solid #e5e5e5;
-    border-radius: 6px;
-    -webkit-touch-callout: default;
-  }
   .modal-footer {
     padding: 1rem 1.25rem;
     border-top: 1px solid #e5e5e5;
@@ -677,27 +668,6 @@
         <button id="copyShareUrlBtn" class="flex-grow">Copy to clipboard</button>
       </div>
       </div>
-  </div>
-</div>
-
-<!-- Export Image Modal (touch devices) -->
-<div id="exportModal" class="modal-overlay">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="exportModalTitle">
-    <div class="modal-header">
-      <h2 id="exportModalTitle">Your image is ready</h2>
-      <button id="exportModalClose" class="modal-close" aria-label="Close">
-        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
-      </button>
-    </div>
-    <div class="modal-body">
-      <img id="exportPreview" class="export-preview" alt="Preview of your blanket design">
-      <div class="yarn-disclaimer">
-        Tap Save image, then choose Save Image to add it to your photos. You can also press and hold the picture above.
-      </div>
-      <div class="button-group-space-between">
-        <button id="exportSaveBtn" class="flex-grow">Save image</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -1001,31 +971,6 @@
       }
       
       return color.toLowerCase();
-    },
-
-    // Lazy load html2canvas
-    _html2canvasPromise: null,
-    
-    async loadHtml2Canvas() {
-      if (this._html2canvasPromise) {
-        return this._html2canvasPromise;
-      }
-      
-      this._html2canvasPromise = new Promise((resolve, reject) => {
-        // Check if already loaded
-        if (window.html2canvas) {
-          resolve(window.html2canvas);
-          return;
-        }
-        
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-        script.onload = () => resolve(window.html2canvas);
-        script.onerror = () => reject(new Error('Failed to load html2canvas'));
-        document.head.appendChild(script);
-      });
-      
-      return this._html2canvasPromise;
     }
   };
 
@@ -1067,11 +1012,7 @@
     shareModal: document.getElementById('shareModal'),
     shareUrlInput: document.getElementById('shareUrlInput'),
     copyShareUrlBtn: document.getElementById('copyShareUrlBtn'),
-    shareModalClose: document.getElementById('shareModalClose'),
-    exportModal: document.getElementById('exportModal'),
-    exportModalClose: document.getElementById('exportModalClose'),
-    exportPreview: document.getElementById('exportPreview'),
-    exportSaveBtn: document.getElementById('exportSaveBtn')
+    shareModalClose: document.getElementById('shareModalClose')
   };
 
   // ============================================================
@@ -1691,13 +1632,9 @@
       const link = document.createElement('a');
       link.href = url;
       link.download = `blanket-design-${new Date().toISOString().slice(0, 10)}.json`;
-      document.body.appendChild(link);
       link.click();
-      link.remove();
       
-      // iOS shows a "Download?" prompt and only reads the file once the user
-      // taps it, so revoking straight away leaves the button doing nothing
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      URL.revokeObjectURL(url);
       
       // Design is saved — no unsaved changes to warn about
       State.isDirty = false;
@@ -2353,78 +2290,129 @@
   // IMAGE EXPORT MODULE
   // ============================================================
   const Export = {
-    _file: null,
-    _previewUrl: null,
-    _lastFocused: null,
+    // Sizes in CSS pixels, matching the desktop grid: .square at its 116px
+    // maximum with an 8px border and the icon at 90% of the inner area
+    SQUARE: 116,
+    BORDER: 8,
+    GAP: 2,
+    PADDING: 20,
+    ICON_RATIO: 0.9,
+    SCALE: 2,
+    MAX_PIXELS: 16000000, // iOS refuses canvases above ~16.7 million pixels
 
-    filename() {
-      return `blanket-design-${new Date().toISOString().slice(0, 10)}.png`;
+    _icons: {},
+
+    // Turn every icon into an image once, at start-up, so exporting never
+    // has to wait for anything
+    preloadIcons() {
+      Config.ICON_SVGS.forEach(icon => {
+        if (!icon || !icon.id || !icon.svg) return;
+        const img = new Image();
+        img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(icon.svg);
+        this._icons[icon.id] = img;
+      });
     },
 
-    // Phones and tablets: html2canvas takes too long for the tap to still
-    // count as a user action when the download fires, so iOS Safari shows a
-    // prompt that does nothing and iOS Chrome blocks it silently. On these
-    // devices we show the finished image and let a second tap save it.
-    isTouchDevice() {
-      return window.matchMedia('(pointer: coarse)').matches;
-    },
-
-    canShareFile(file) {
+    // Everything here runs synchronously, while the tap still counts, so
+    // iOS Safari and Chrome allow the share sheet or download that follows
+    exportAsImage() {
       try {
-        return !!(navigator.canShare && navigator.canShare({ files: [file] }));
-      } catch (e) {
-        return false;
-      }
-    },
-
-    async exportAsImage() {
-      try {
-        // Show loading state
-        DOM.exportBtn.disabled = true;
-        
-        // Lazy load html2canvas
-        const html2canvas = await Utils.loadHtml2Canvas();
-        
-        const gridInner = DOM.gridInner;
-        const clone = gridInner.cloneNode(true);
-
-        const wrapper = document.createElement('div');
-        wrapper.style.position = 'absolute';
-        wrapper.style.top = '-9999px';
-        wrapper.style.left = '-9999px';
-        wrapper.style.background = 'white';
-        wrapper.style.padding = '20px';
-        wrapper.style.display = 'inline-block';
-        wrapper.appendChild(clone);
-
-        document.body.appendChild(wrapper);
-
-        let canvas;
-        try {
-          canvas = await html2canvas(wrapper, { scale: 2 });
-        } finally {
-          document.body.removeChild(wrapper);
+        const squares = Array.from(DOM.gridInner.querySelectorAll('.square'));
+        const notReady = squares.some(sq => {
+          const img = this._icons[sq.dataset.iconId];
+          return img && !(img.complete && img.naturalWidth);
+        });
+        if (notReady) {
+          UI.showToast('Still getting ready, please try again in a moment.');
+          return;
         }
 
-        const blob = await new Promise((resolve, reject) => {
-          canvas.toBlob(b => b ? resolve(b) : reject(new Error('Could not create image')), 'image/png');
-        });
-        const file = new File([blob], this.filename(), { type: 'image/png' });
+        const canvas = this.drawGrid(squares);
+        const file = new File(
+          [this.canvasToBlob(canvas)],
+          `blanket-design-${new Date().toISOString().slice(0, 10)}.png`,
+          { type: 'image/png' }
+        );
 
-        if (this.isTouchDevice()) {
-          this.openModal(file);
+        // Phones: share sheet, so people can "Save Image" to Photos.
+        // Desktop (where Windows Chrome also supports sharing): plain download.
+        const isTouch = window.matchMedia('(pointer: coarse)').matches;
+        if (isTouch && navigator.canShare && navigator.canShare({ files: [file] })) {
+          navigator.share({ files: [file] }).catch(e => {
+            if (e.name !== 'AbortError') this.download(file); // AbortError = user closed the sheet
+          });
         } else {
           this.download(file);
         }
       } catch (error) {
         console.error('Export failed:', error);
         UI.showToast('Export failed. Please try again.', true);
-      } finally {
-        DOM.exportBtn.disabled = false;
       }
     },
 
-    // Classic download via a blob URL (desktop, and fallback on mobile)
+    // Draw the grid straight onto a canvas: white background, then each
+    // square's fill, border and icon
+    drawGrid(squares) {
+      const { SQUARE, BORDER, GAP, PADDING, ICON_RATIO, MAX_PIXELS } = this;
+      const { cols, rows } = State.grid;
+      const width = PADDING * 2 + cols * SQUARE + (cols - 1) * GAP;
+      const height = PADDING * 2 + rows * SQUARE + (rows - 1) * GAP;
+
+      // Keep very large blankets under the iOS canvas limit
+      let scale = this.SCALE;
+      if (width * height * scale * scale > MAX_PIXELS) {
+        scale = Math.sqrt(MAX_PIXELS / (width * height));
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.floor(width * scale);
+      canvas.height = Math.floor(height * scale);
+      const ctx = canvas.getContext('2d');
+      ctx.scale(scale, scale);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, width, height);
+
+      const iconSize = (SQUARE - BORDER * 2) * ICON_RATIO;
+      const iconOffset = (SQUARE - iconSize) / 2;
+
+      squares.forEach((square, index) => {
+        const { row, col } = Utils.indexToCoords(index, cols);
+        const x = PADDING + col * (SQUARE + GAP);
+        const y = PADDING + row * (SQUARE + GAP);
+        const style = getComputedStyle(square);
+
+        // Fill (runs under the border, like CSS, so a transparent border shows it)
+        ctx.fillStyle = style.backgroundColor;
+        ctx.fillRect(x, y, SQUARE, SQUARE);
+
+        // Border as a frame
+        ctx.fillStyle = style.borderTopColor;
+        ctx.beginPath();
+        ctx.rect(x, y, SQUARE, SQUARE);
+        ctx.rect(x + BORDER, y + BORDER, SQUARE - BORDER * 2, SQUARE - BORDER * 2);
+        ctx.fill('evenodd');
+
+        const img = this._icons[square.dataset.iconId];
+        if (img) {
+          ctx.drawImage(img, x + iconOffset, y + iconOffset, iconSize, iconSize);
+        }
+      });
+
+      return canvas;
+    },
+
+    // Synchronous version of canvas.toBlob(), so nothing waits
+    canvasToBlob(canvas) {
+      const binary = atob(canvas.toDataURL('image/png').split(',')[1]);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return new Blob([bytes], { type: 'image/png' });
+    },
+
+    // Download via a blob URL, kept alive long enough for the browser to read it
     download(file) {
       const url = URL.createObjectURL(file);
       const link = document.createElement('a');
@@ -2434,46 +2422,6 @@
       link.click();
       link.remove();
       setTimeout(() => URL.revokeObjectURL(url), 60000);
-    },
-
-    // Runs from the "Save image" tap, so the browser treats it as a user action
-    async save() {
-      if (!this._file) return;
-      if (this.canShareFile(this._file)) {
-        try {
-          await navigator.share({ files: [this._file] });
-          this.closeModal();
-          return;
-        } catch (e) {
-          if (e.name === 'AbortError') return; // User closed the share sheet
-        }
-      }
-      this.download(this._file);
-    },
-
-    openModal(file) {
-      this._lastFocused = document.activeElement;
-      this._file = file;
-      if (this._previewUrl) URL.revokeObjectURL(this._previewUrl);
-      this._previewUrl = URL.createObjectURL(file);
-      DOM.exportPreview.src = this._previewUrl;
-      DOM.exportModal.classList.add('open');
-      DOM.exportSaveBtn.focus();
-    },
-
-    closeModal() {
-      DOM.exportModal.classList.remove('open');
-      DOM.exportPreview.removeAttribute('src');
-      if (this._previewUrl) {
-        URL.revokeObjectURL(this._previewUrl);
-        this._previewUrl = null;
-      }
-      this._file = null;
-      if (this._lastFocused && this._lastFocused.isConnected) {
-        this._lastFocused.focus();
-      } else {
-        DOM.exportBtn.focus();
-      }
     }
   };
 
@@ -2582,21 +2530,6 @@
         YarnCalculator.closeModal();
       });
       
-      // Export image modal (touch devices)
-      DOM.exportSaveBtn.addEventListener('click', () => {
-        Export.save();
-      });
-      
-      DOM.exportModalClose.addEventListener('click', () => {
-        Export.closeModal();
-      });
-      
-      DOM.exportModal.addEventListener('click', (e) => {
-        if (e.target === DOM.exportModal) {
-          Export.closeModal();
-        }
-      });
-      
       // Yarn modal copy and share buttons
       DOM.yarnCopyBtn.addEventListener('click', () => {
         YarnCalculator.copyToClipboard();
@@ -2642,8 +2575,6 @@
             YarnCalculator.closeModal();
           } else if (DOM.shareModal.classList.contains('open')) {
             URLShare.closeModal();
-          } else if (DOM.exportModal.classList.contains('open')) {
-            Export.closeModal();
           } else if (DOM.dropdownMenu.classList.contains('open')) {
             UI.setMenuOpen(false);
             DOM.menuBtn.focus();
@@ -2772,6 +2703,7 @@
     UI.createPalette(DOM.bgPalette, Config.PRESET_BG_COLORS, 'bg');
     UI.createPalette(DOM.borderPalette, Config.PRESET_BORDER_COLORS, 'border');
     UI.createIconGrid();
+    Export.preloadIcons();
     
     // Check for shared design in URL hash
     const hasSharedDesign = window.location.hash && window.location.hash.length > 4;
